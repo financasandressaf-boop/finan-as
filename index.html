@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Controle de Gastos Mensais</title>
+<style>
+  :root{
+    --bg: #F2F6F5;
+    --card: #FFFFFF;
+    --border: #D8E1DF;
+    --navy: #1C3A4A;
+    --navy-soft: #4A6572;
+    --teal: #227A69;
+    --teal-dark: #175B4E;
+    --amber: #C9660B;
+    --amber-soft: #FBE9D9;
+    --teal-soft: #DCEFE9;
+    --red: #B23A3A;
+    --shadow: 0 2px 10px rgba(28,58,74,0.08);
+  }
+
+  * { box-sizing: border-box; }
+
+  body{
+    margin:0;
+    background: var(--bg);
+    font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: var(--navy);
+    font-size: 18px;
+    line-height: 1.4;
+    padding-bottom: 60px;
+  }
+
+  h1, h2, h3 {
+    font-family: Georgia, "Times New Roman", serif;
+    color: var(--navy);
+    margin: 0 0 6px 0;
+  }
+
+  header.topo{
+    background: var(--navy);
+    color: #fff;
+    padding: 22px 24px;
+    box-shadow: var(--shadow);
+  }
+  header.topo h1{
+    color: #fff;
+    font-size: 30px;
+  }
+  header.topo p{
+    margin: 4px 0 0 0;
+    color: #CFE0DE;
+    font-size: 16px;
+  }
+
+  main{
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 24px 20px;
+  }
+
+  /* --- Navegador de mes --- */
+  .nav-mes{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap: 18px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 18px;
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .nav-mes button{
+    font-size: 22px;
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--teal-soft);
+    color: var(--teal-dark);
+    cursor:pointer;
+    font-weight: bold;
+  }
+  .nav-mes button:hover{ background: var(--teal); color:#fff; }
+  .nav-mes .titulo-mes{
+    font-size: 26px;
+    font-family: Georgia, serif;
+    min-width: 240px;
+    text-align:center;
+    font-weight: bold;
+  }
+  .btn-hoje{
+    font-size: 15px !important;
+    width: auto !important;
+    height: auto !important;
+    padding: 10px 16px !important;
+    font-family: "Segoe UI", sans-serif;
+  }
+
+  /* --- Barra de acoes principais --- */
+  .acoes-principais{
+    display:flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+  .btn-acao-principal{
+    flex: 1 1 200px;
+    padding: 16px 18px;
+    font-size: 17px;
+    font-weight: bold;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    box-shadow: var(--shadow);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap: 8px;
+  }
+  .btn-acao-principal.adicionar{
+    background: var(--teal);
+    color: #fff;
+  }
+  .btn-acao-principal.adicionar:hover{ background: var(--teal-dark); }
+  .btn-acao-principal.relatorio{
+    background: #fff;
+    color: var(--navy);
+    border: 2px solid var(--border);
+  }
+  .btn-acao-principal.relatorio:hover{ background: #ECEFEE; }
+
+  /* --- Cartoes de resumo --- */
+  .resumo{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .cartao-resumo{
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px;
+    box-shadow: var(--shadow);
+    text-align:center;
+  }
+  .cartao-resumo .rotulo{
+    font-size: 15px;
+    color: var(--navy-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin-bottom: 6px;
+  }
+  .cartao-resumo .valor{
+    font-size: 26px;
+    font-weight: bold;
+    font-family: Georgia, serif;
+  }
+  .cartao-resumo.previsto .valor{ color: var(--navy); }
+  .cartao-resumo.pago .valor{ color: var(--teal-dark); }
+  .cartao-resumo.pendente .valor{ color: var(--amber); }
+
+  /* barra de progresso (termometro) */
+  .progresso-wrap{
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px 18px;
+    box-shadow: var(--shadow);
+    margin-bottom: 24px;
+  }
+  .progresso-wrap .legenda{
+    display:flex;
+    justify-content: space-between;
+    font-size: 15px;
+    color: var(--navy-soft);
+    margin-bottom: 8px;
+  }
+  .barra{
+    width:100%;
+    height: 22px;
+    background: var(--amber-soft);
+    border-radius: 11px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .barra-preenchida{
+    height:100%;
+    background: var(--teal);
+    transition: width 0.4s ease;
+  }
+
+  /* --- Formulario (dentro do modal) --- */
+  .cartao{
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    padding: 20px;
+    margin-bottom: 24px;
+  }
+  .cartao h2{ font-size: 22px; margin-bottom: 14px; }
+
+  .tipos-conta{
+    display:flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+  }
+  .tipo-btn{
+    flex: 1 1 160px;
+    padding: 14px 10px;
+    border-radius: 10px;
+    border: 2px solid var(--border);
+    background: #fff;
+    cursor:pointer;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--navy-soft);
+    text-align:center;
+  }
+  .tipo-btn.ativo{
+    border-color: var(--teal);
+    background: var(--teal-soft);
+    color: var(--teal-dark);
+  }
+  .tipo-desc{
+    font-size: 14px;
+    color: var(--navy-soft);
+    margin: -10px 0 16px 0;
+  }
+
+  .campo{
+    margin-bottom: 14px;
+  }
+  .campo label{
+    display:block;
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: var(--navy);
+  }
+  .campo input, .campo select{
+    width: 100%;
+    padding: 12px 12px;
+    font-size: 17px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: #FBFDFC;
+    color: var(--navy);
+  }
+  .campo input:focus, .campo select:focus{
+    outline: 3px solid var(--teal);
+    outline-offset: 1px;
+  }
+  .linha-campos{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  @media (max-width: 640px){
+    .linha-campos{ grid-template-columns: 1fr; }
+    .resumo{ grid-template-columns: 1fr; }
+  }
+
+  .btn-principal{
+    background: var(--teal);
+    color: #fff;
+    border: none;
+    padding: 14px 22px;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 10px;
+    cursor: pointer;
+    width: 100%;
+  }
+  .btn-principal:hover{ background: var(--teal-dark); }
+
+  .ajuda{
+    font-size: 14px;
+    color: var(--navy-soft);
+    margin-top: -8px;
+    margin-bottom: 14px;
+  }
+
+  /* --- Lista de contas --- */
+  .lista-header{
+    display:flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .conta-item{
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    box-shadow: var(--shadow);
+  }
+  .conta-item.pago{ border-left: 6px solid var(--teal); }
+  .conta-item.pendente{ border-left: 6px solid var(--amber); }
+
+  .conta-info{ flex: 1 1 260px; }
+  .conta-desc{ font-size: 18px; font-weight: 600; }
+  .conta-sub{ font-size: 14px; color: var(--navy-soft); margin-top: 2px; }
+  .conta-valor{ font-size: 20px; font-weight: bold; min-width: 130px; text-align:right; }
+
+  .conta-acoes{
+    display:flex;
+    gap: 8px;
+    align-items:center;
+  }
+  .btn-status{
+    padding: 10px 16px;
+    border-radius: 8px;
+    border: none;
+    font-size: 15px;
+    font-weight: bold;
+    cursor:pointer;
+  }
+  .btn-status.pago{ background: var(--teal-soft); color: var(--teal-dark); }
+  .btn-status.pendente{ background: var(--amber-soft); color: var(--amber); }
+
+  .btn-icone{
+    width: 42px;
+    height: 42px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: #fff;
+    font-size: 18px;
+    cursor:pointer;
+  }
+  .btn-icone:hover{ background: #f0f0f0; }
+  .btn-icone.excluir:hover{ background: #FBEAEA; border-color: var(--red); }
+
+  .vazio{
+    text-align:center;
+    padding: 40px 20px;
+    color: var(--navy-soft);
+    background: var(--card);
+    border: 1px dashed var(--border);
+    border-radius: 14px;
+    font-size: 17px;
+  }
+
+  /* Modais */
+  .fundo-modal{
+    display:none;
+    position: fixed;
+    inset: 0;
+    background: rgba(28,58,74,0.45);
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+    padding: 16px;
+    overflow-y: auto;
+  }
+  .fundo-modal.aberto{ display:flex; }
+  .modal{
+    background: #fff;
+    border-radius: 14px;
+    padding: 22px;
+    max-width: 420px;
+    width: 100%;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  .modal.modal-largo{ max-width: 560px; }
+  .modal-cabecalho{
+    display:flex;
+    justify-content: space-between;
+    align-items:center;
+    margin-bottom: 8px;
+  }
+  .btn-fechar-modal{
+    background: none;
+    border: none;
+    font-size: 22px;
+    cursor: pointer;
+    color: var(--navy-soft);
+    width: 36px;
+    height: 36px;
+  }
+  .modal-acoes{
+    display:flex;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  .btn-secundario{
+    background: #ECEFEE;
+    color: var(--navy);
+    border: none;
+    padding: 14px 22px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 10px;
+    cursor: pointer;
+    flex: 1;
+  }
+
+  /* --- Opcoes de relatorio --- */
+  .opcoes-relatorio{
+    display:flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+  .opcao-relatorio{
+    padding: 16px;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    text-align:left;
+    background: #fff;
+    cursor:pointer;
+    font-size: 16px;
+    color: var(--navy);
+  }
+  .opcao-relatorio:hover{ border-color: var(--teal); background: var(--teal-soft); }
+  .opcao-relatorio b{ display:block; font-size: 17px; margin-bottom: 3px; }
+  .opcao-relatorio span{ font-size: 14px; color: var(--navy-soft); }
+
+  .rodape-nota{
+    text-align:center;
+    color: var(--navy-soft);
+    font-size: 13px;
+    margin-top: 30px;
+  }
+
+  /* --- Area de impressao (relatorio em PDF) --- */
+  #areaImpressao{ display:none; }
+
+  @media print{
+    header.topo, .nav-mes, .acoes-principais, .resumo, .progresso-wrap,
+    .cartao, .lista-header, #listaContas, .rodape-nota, .fundo-modal{
+      display:none !important;
+    }
+    #areaImpressao{
+      display:block !important;
+    }
+    body{ background:#fff; font-size: 13px; padding:0; }
+  }
+
+  .rel-cabecalho{
+    text-align:center;
+    margin-bottom: 20px;
+    border-bottom: 3px solid #1C3A4A;
+    padding-bottom: 14px;
+  }
+  .rel-cabecalho h2{
+    font-size: 24px;
+    margin-bottom: 4px;
+  }
+  .rel-cabecalho p{ margin:0; color:#4A6572; }
+  .rel-resumo{
+    display:flex;
+    justify-content: space-around;
+    margin-bottom: 18px;
+    gap: 10px;
+  }
+  .rel-resumo div{
+    text-align:center;
+    border: 1px solid #D8E1DF;
+    border-radius: 8px;
+    padding: 10px 14px;
+    flex:1;
+  }
+  .rel-resumo .rot{ font-size:12px; color:#4A6572; text-transform:uppercase; }
+  .rel-resumo .val{ font-size:18px; font-weight:bold; }
+  table.rel-tabela{
+    width:100%;
+    border-collapse: collapse;
+    margin-bottom: 22px;
+  }
+  table.rel-tabela th, table.rel-tabela td{
+    border: 1px solid #D8E1DF;
+    padding: 8px 10px;
+    text-align:left;
+    font-size: 13px;
+  }
+  table.rel-tabela th{
+    background: #1C3A4A;
+    color: #fff;
+  }
+  table.rel-tabela tr.rel-pago td{ color:#175B4E; }
+  table.rel-tabela tr.rel-pendente td{ color:#C9660B; }
+  .rel-mes-titulo{
+    font-size: 16px;
+    font-weight:bold;
+    margin: 18px 0 8px 0;
+    color:#1C3A4A;
+    border-left: 4px solid #227A69;
+    padding-left: 8px;
+  }
+
+  .aviso{
+    max-width: 980px;
+    margin: 14px auto 0 auto;
+    padding: 12px 18px;
+    border-radius: 10px;
+    font-size: 14px;
+    display: none;
+  }
+  .aviso.mostrar{ display:block; }
+  .aviso.info{ background:#FBE9D9; color:#7A4408; border:1px solid #E7B683; }
+  .aviso.erro{ background:#FBEAEA; color:#8A2222; border:1px solid #E1A0A0; }
+  .aviso.sucesso{ background:#DCEFE9; color:#175B4E; border:1px solid #9FCFC0; }
+</style>
+</head>
+<body>
+
+<header class="topo">
+  <h1>Controle de Gastos Mensais</h1>
+  <p>Organize suas contas mes a mes, marque o que ja foi pago e acompanhe parcelamentos.</p>
+</header>
+
+<div class="aviso" id="avisoStatus"></div>
+
+<main>
+
+  <div class="nav-mes">
+    <button id="btnMesAnterior" title="Mes anterior">&#8249;</button>
+    <div class="titulo-mes" id="tituloMes">Agosto de 2026</div>
+    <button id="btnProximoMes" title="Proximo mes">&#8250;</button>
+    <button class="btn-hoje" id="btnHoje">Ir para hoje</button>
+  </div>
+
+  <div class="acoes-principais">
+    <button class="btn-acao-principal adicionar" id="btnAbrirAdicionar">+ Adicionar conta</button>
+    <button class="btn-acao-principal relatorio" id="btnAbrirRelatorio">Baixar relatorio em PDF</button>
+  </div>
+
+  <div class="resumo">
+    <div class="cartao-resumo previsto">
+      <div class="rotulo">Total previsto</div>
+      <div class="valor" id="totalPrevisto">R$ 0,00</div>
+    </div>
+    <div class="cartao-resumo pago">
+      <div class="rotulo">Ja pago</div>
+      <div class="valor" id="totalPago">R$ 0,00</div>
+    </div>
+    <div class="cartao-resumo pendente">
+      <div class="rotulo">Ainda falta pagar</div>
+      <div class="valor" id="totalPendente">R$ 0,00</div>
+    </div>
+  </div>
+
+  <div class="progresso-wrap">
+    <div class="legenda">
+      <span>Progresso de pagamentos do mes</span>
+      <span id="progressoPercentual">0%</span>
+    </div>
+    <div class="barra"><div class="barra-preenchida" id="barraPreenchida" style="width:0%"></div></div>
+  </div>
+
+  <div class="lista-header">
+    <h2 id="tituloLista">Contas de Agosto</h2>
+  </div>
+  <div id="listaContas"></div>
+
+</main>
+
+<!-- Modal: adicionar conta -->
+<div class="fundo-modal" id="fundoModalAdicionar">
+  <div class="modal modal-largo">
+    <div class="modal-cabecalho">
+      <h2 style="margin:0;">Adicionar uma conta</h2>
+      <button class="btn-fechar-modal" id="btnFecharAdicionar" title="Fechar">&#10005;</button>
+    </div>
+
+    <div class="tipos-conta">
+      <button class="tipo-btn ativo" data-tipo="unica">Conta unica</button>
+      <button class="tipo-btn" data-tipo="parcelada">Compra parcelada</button>
+      <button class="tipo-btn" data-tipo="fixa">Despesa fixa por varios meses</button>
+    </div>
+    <div class="tipo-desc" id="tipoDescricao">
+      Uma conta que acontece uma unica vez, em um mes especifico.
+    </div>
+
+    <form id="formConta">
+      <div class="campo">
+        <label for="descricao">Descricao da conta</label>
+        <input type="text" id="descricao" placeholder="Ex: Conta de luz, Cartao de credito, TV nova..." required>
+      </div>
+
+      <div class="linha-campos">
+        <div class="campo">
+          <label id="rotuloValor" for="valor">Valor (R$)</label>
+          <input type="number" id="valor" step="0.01" min="0" placeholder="0,00" required>
+        </div>
+        <div class="campo">
+          <label for="diaVencimento">Dia do vencimento (opcional)</label>
+          <input type="number" id="diaVencimento" min="1" max="31" placeholder="Ex: 10">
+        </div>
+      </div>
+
+      <div class="linha-campos">
+        <div class="campo">
+          <label for="mesInicial">Mes inicial</label>
+          <select id="mesInicial"></select>
+        </div>
+        <div class="campo">
+          <label for="anoInicial">Ano inicial</label>
+          <select id="anoInicial"></select>
+        </div>
+      </div>
+
+      <div class="campo" id="campoParcelas" style="display:none;">
+        <label id="rotuloParcelas" for="numParcelas">Numero de parcelas</label>
+        <input type="number" id="numParcelas" min="2" max="60" placeholder="Ex: 10">
+        <div class="ajuda" id="ajudaParcelas"></div>
+      </div>
+
+      <button type="submit" class="btn-principal">Adicionar conta</button>
+    </form>
+  </div>
+</div>
+
+<!-- Modal: editar conta -->
+<div class="fundo-modal" id="fundoModal">
+  <div class="modal">
+    <h3>Editar conta</h3>
+    <div class="campo">
+      <label for="editDescricao">Descricao</label>
+      <input type="text" id="editDescricao">
+    </div>
+    <div class="linha-campos">
+      <div class="campo">
+        <label for="editValor">Valor (R$)</label>
+        <input type="number" id="editValor" step="0.01" min="0">
+      </div>
+      <div class="campo">
+        <label for="editDia">Dia do vencimento</label>
+        <input type="number" id="editDia" min="1" max="31">
+      </div>
+    </div>
+    <div class="modal-acoes">
+      <button class="btn-secundario" id="btnCancelarEdicao">Cancelar</button>
+      <button class="btn-principal" id="btnSalvarEdicao" style="flex:1;">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: opcoes de relatorio -->
+<div class="fundo-modal" id="fundoModalRelatorio">
+  <div class="modal">
+    <div class="modal-cabecalho">
+      <h3 style="margin:0;">Baixar relatorio em PDF</h3>
+      <button class="btn-fechar-modal" id="btnFecharRelatorio" title="Fechar">&#10005;</button>
+    </div>
+    <p style="font-size:15px; color:var(--navy-soft);">Escolha o que deseja incluir no relatorio. Depois, na janela de impressao, selecione "Salvar como PDF" e escolha onde guardar o arquivo.</p>
+    <div class="opcoes-relatorio">
+      <button class="opcao-relatorio" id="btnRelatorioMes">
+        <b id="rotuloRelatorioMes">Relatorio do mes atual</b>
+        <span>Somente as contas do mes que esta sendo visualizado</span>
+      </button>
+      <button class="opcao-relatorio" id="btnRelatorioAno">
+        <b>Relatorio do ano todo</b>
+        <span>Todas as contas cadastradas no ano, organizadas mes a mes</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Conteudo usado apenas na hora de imprimir/gerar PDF -->
+<div id="areaImpressao"></div>
+
+<p class="rodape-nota" id="rodapeNota">Os dados ficam salvos neste computador, neste navegador. Use sempre o mesmo navegador para acessar suas contas.</p>
+
+<!-- Biblioteca do Supabase (necessaria apenas se voce configurar SUPABASE_URL / SUPABASE_ANON_KEY abaixo) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+(function(){
+  // ======================================================================
+  // CONFIGURACAO DO SUPABASE
+  // Cole aqui a URL do seu projeto e a chave "anon public" (Settings > API).
+  // Enquanto nao configurar, o site funciona normalmente salvando os dados
+  // so neste navegador (modo local), como antes.
+  // ======================================================================
+  var SUPABASE_URL = "COLE_AQUI_A_URL_DO_SEU_PROJETO_SUPABASE";
+  var SUPABASE_ANON_KEY = "COLE_AQUI_A_CHAVE_ANON_PUBLIC";
+
+  var supabaseConfigurado = SUPABASE_URL.indexOf("COLE_AQUI") === -1 && SUPABASE_ANON_KEY.indexOf("COLE_AQUI") === -1;
+  var supabaseClient = null;
+  if(supabaseConfigurado && window.supabase){
+    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  }
+
+  var NOMES_MES = ["Janeiro","Fevereiro","Marco","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+  var CHAVE_ARMAZENAMENTO = "controleGastos_contas_v1";
+
+  function mostrarAviso(mensagem, tipo){
+    var el = document.getElementById("avisoStatus");
+    el.textContent = mensagem;
+    el.className = "aviso mostrar " + (tipo || "info");
+  }
+  function esconderAviso(){
+    document.getElementById("avisoStatus").className = "aviso";
+  }
+
+  if(supabaseConfigurado){
+    document.getElementById("rodapeNota").textContent =
+      "Seus dados ficam salvos no seu banco de dados na nuvem (Supabase). Voce pode acessar de qualquer computador por este mesmo link.";
+  } else {
+    mostrarAviso("Este site ainda esta salvando os dados so neste navegador. Para acessar suas contas de qualquer computador, configure o Supabase (veja o arquivo COMO-CONFIGURAR.md).", "info");
+  }
+
+  var hoje = new Date();
+  var estado = {
+    mes: hoje.getMonth(),
+    ano: hoje.getFullYear(),
+    tipoAtivo: "unica",
+    contas: [],
+    editandoId: null
+  };
+
+  // ---- Camada de dados: usa Supabase se configurado, senao localStorage ----
+
+  function carregarContasLocal(){
+    try{
+      var salvo = localStorage.getItem(CHAVE_ARMAZENAMENTO);
+      return salvo ? JSON.parse(salvo) : [];
+    } catch(e){
+      return [];
+    }
+  }
+
+  function salvarContasLocal(){
+    localStorage.setItem(CHAVE_ARMAZENAMENTO, JSON.stringify(estado.contas));
+  }
+
+  function linhaBdParaLocal(r){
+    return {
+      id: r.id,
+      descricao: r.descricao,
+      valor: Number(r.valor),
+      dia: r.dia,
+      mes: r.mes,
+      ano: r.ano,
+      status: r.status,
+      grupo: r.grupo,
+      parcelaInfo: r.parcela_info
+    };
+  }
+
+  function linhaLocalParaBd(c){
+    return {
+      descricao: c.descricao,
+      valor: c.valor,
+      dia: c.dia,
+      mes: c.mes,
+      ano: c.ano,
+      status: c.status,
+      grupo: c.grupo,
+      parcela_info: c.parcelaInfo
+    };
+  }
+
+  // Busca todas as contas (do Supabase ou do localStorage)
+  async function buscarTodasContas(){
+    if(supabaseConfigurado && supabaseClient){
+      var resp = await supabaseClient.from("contas").select("*");
+      if(resp.error){
+        mostrarAviso("Nao foi possivel carregar os dados do Supabase. Verifique a URL/chave e a tabela 'contas'. Detalhe: " + resp.error.message, "erro");
+        return [];
+      }
+      esconderAviso();
+      return resp.data.map(linhaBdParaLocal);
+    }
+    return carregarContasLocal();
+  }
+
+  // Insere uma ou mais contas novas. Retorna as contas ja com id definido.
+  async function inserirContas(novasContas){
+    if(supabaseConfigurado && supabaseClient){
+      var linhas = novasContas.map(linhaLocalParaBd);
+      var resp = await supabaseClient.from("contas").insert(linhas).select();
+      if(resp.error){
+        mostrarAviso("Nao foi possivel salvar no Supabase. Detalhe: " + resp.error.message, "erro");
+        return null;
+      }
+      return resp.data.map(linhaBdParaLocal);
+    }
+    novasContas.forEach(function(c){ c.id = gerarId(); });
+    estado.contas = estado.contas.concat(novasContas);
+    salvarContasLocal();
+    return novasContas;
+  }
+
+  // Atualiza campos de uma conta (status, descricao, valor, dia)
+  async function atualizarContaBd(id, campos){
+    if(supabaseConfigurado && supabaseClient){
+      var camposBd = {};
+      if("descricao" in campos) camposBd.descricao = campos.descricao;
+      if("valor" in campos) camposBd.valor = campos.valor;
+      if("dia" in campos) camposBd.dia = campos.dia;
+      if("status" in campos) camposBd.status = campos.status;
+      var resp = await supabaseClient.from("contas").update(camposBd).eq("id", id);
+      if(resp.error){
+        mostrarAviso("Nao foi possivel atualizar no Supabase. Detalhe: " + resp.error.message, "erro");
+        return false;
+      }
+      return true;
+    }
+    salvarContasLocal();
+    return true;
+  }
+
+  // Exclui uma conta
+  async function excluirContaBd(id){
+    if(supabaseConfigurado && supabaseClient){
+      var resp = await supabaseClient.from("contas").delete().eq("id", id);
+      if(resp.error){
+        mostrarAviso("Nao foi possivel excluir no Supabase. Detalhe: " + resp.error.message, "erro");
+        return false;
+      }
+      return true;
+    }
+    salvarContasLocal();
+    return true;
+  }
+
+  function formatarMoeda(valor){
+    return "R$ " + Number(valor || 0).toLocaleString("pt-BR", {minimumFractionDigits:2, maximumFractionDigits:2});
+  }
+
+  function gerarId(){
+    return "c" + Date.now() + Math.floor(Math.random()*10000);
+  }
+
+  function escaparHtml(texto){
+    var div = document.createElement("div");
+    div.textContent = texto;
+    return div.innerHTML;
+  }
+
+  // --- preencher selects de mes/ano iniciais do formulario ---
+  function preencherSelectsFormulario(){
+    var selMes = document.getElementById("mesInicial");
+    var selAno = document.getElementById("anoInicial");
+    selMes.innerHTML = "";
+    NOMES_MES.forEach(function(nome, indice){
+      var op = document.createElement("option");
+      op.value = indice;
+      op.textContent = nome;
+      selMes.appendChild(op);
+    });
+    selMes.value = estado.mes;
+
+    selAno.innerHTML = "";
+    var anoBase = hoje.getFullYear();
+    for(var a = anoBase - 2; a <= anoBase + 5; a++){
+      var op2 = document.createElement("option");
+      op2.value = a;
+      op2.textContent = a;
+      selAno.appendChild(op2);
+    }
+    selAno.value = estado.ano;
+  }
+
+  function atualizarTituloMes(){
+    document.getElementById("tituloMes").textContent = NOMES_MES[estado.mes] + " de " + estado.ano;
+    document.getElementById("tituloLista").textContent = "Contas de " + NOMES_MES[estado.mes];
+    document.getElementById("rotuloRelatorioMes").textContent = "Relatorio de " + NOMES_MES[estado.mes] + " de " + estado.ano;
+  }
+
+  function mudarMes(delta){
+    estado.mes += delta;
+    if(estado.mes > 11){ estado.mes = 0; estado.ano++; }
+    if(estado.mes < 0){ estado.mes = 11; estado.ano--; }
+    atualizarTituloMes();
+    renderizarLista();
+  }
+
+  document.getElementById("btnMesAnterior").addEventListener("click", function(){ mudarMes(-1); });
+  document.getElementById("btnProximoMes").addEventListener("click", function(){ mudarMes(1); });
+  document.getElementById("btnHoje").addEventListener("click", function(){
+    estado.mes = hoje.getMonth();
+    estado.ano = hoje.getFullYear();
+    atualizarTituloMes();
+    renderizarLista();
+  });
+
+  // --- Modal adicionar ---
+  var fundoAdicionar = document.getElementById("fundoModalAdicionar");
+  document.getElementById("btnAbrirAdicionar").addEventListener("click", function(){
+    preencherSelectsFormulario();
+    fundoAdicionar.classList.add("aberto");
+  });
+  document.getElementById("btnFecharAdicionar").addEventListener("click", function(){
+    fundoAdicionar.classList.remove("aberto");
+  });
+  fundoAdicionar.addEventListener("click", function(evento){
+    if(evento.target === fundoAdicionar) fundoAdicionar.classList.remove("aberto");
+  });
+
+  // --- selecao do tipo de conta ---
+  var descricoesTipo = {
+    unica: "Uma conta que acontece uma unica vez, em um mes especifico.",
+    parcelada: "Uma compra parcelada: voce informa o valor TOTAL e o numero de parcelas, e o sistema divide o valor automaticamente pelos meses seguintes.",
+    fixa: "Uma despesa que se repete com o MESMO valor por varios meses seguidos (ex: mensalidade de R$100 por 10 meses)."
+  };
+
+  var botoesTipo = document.querySelectorAll(".tipo-btn");
+  botoesTipo.forEach(function(botao){
+    botao.addEventListener("click", function(){
+      botoesTipo.forEach(function(b){ b.classList.remove("ativo"); });
+      botao.classList.add("ativo");
+      estado.tipoAtivo = botao.getAttribute("data-tipo");
+      document.getElementById("tipoDescricao").textContent = descricoesTipo[estado.tipoAtivo];
+
+      var campoParcelas = document.getElementById("campoParcelas");
+      var rotuloValor = document.getElementById("rotuloValor");
+      var rotuloParcelas = document.getElementById("rotuloParcelas");
+      var ajudaParcelas = document.getElementById("ajudaParcelas");
+
+      if(estado.tipoAtivo === "unica"){
+        campoParcelas.style.display = "none";
+        rotuloValor.textContent = "Valor (R$)";
+      } else if(estado.tipoAtivo === "parcelada"){
+        campoParcelas.style.display = "block";
+        rotuloValor.textContent = "Valor TOTAL da compra (R$)";
+        rotuloParcelas.textContent = "Em quantas vezes";
+        ajudaParcelas.textContent = "O valor total sera dividido igualmente entre as parcelas, uma por mes.";
+      } else if(estado.tipoAtivo === "fixa"){
+        campoParcelas.style.display = "block";
+        rotuloValor.textContent = "Valor de cada mes (R$)";
+        rotuloParcelas.textContent = "Por quantos meses";
+        ajudaParcelas.textContent = "O mesmo valor sera lancado em cada um desses meses, comecando pelo mes inicial.";
+      }
+    });
+  });
+
+  // --- envio do formulario ---
+  document.getElementById("formConta").addEventListener("submit", async function(evento){
+    evento.preventDefault();
+
+    var descricao = document.getElementById("descricao").value.trim();
+    var valor = parseFloat(document.getElementById("valor").value);
+    var dia = document.getElementById("diaVencimento").value ? parseInt(document.getElementById("diaVencimento").value, 10) : null;
+    var mesInicial = parseInt(document.getElementById("mesInicial").value, 10);
+    var anoInicial = parseInt(document.getElementById("anoInicial").value, 10);
+
+    if(!descricao || isNaN(valor) || valor <= 0){
+      alert("Preencha a descricao e um valor valido antes de adicionar.");
+      return;
+    }
+
+    var botaoSalvar = evento.target.querySelector("button[type=submit]");
+    var textoOriginalBotao = botaoSalvar.textContent;
+    botaoSalvar.disabled = true;
+    botaoSalvar.textContent = "Salvando...";
+
+    var novasContas = [];
+
+    if(estado.tipoAtivo === "unica"){
+      novasContas.push({
+        descricao: descricao,
+        valor: valor,
+        dia: dia,
+        mes: mesInicial,
+        ano: anoInicial,
+        status: "pendente",
+        grupo: null,
+        parcelaInfo: null
+      });
+    } else {
+      var numParcelas = parseInt(document.getElementById("numParcelas").value, 10);
+      if(!numParcelas || numParcelas < 2){
+        alert("Informe um numero de parcelas/meses valido (2 ou mais).");
+        botaoSalvar.disabled = false;
+        botaoSalvar.textContent = textoOriginalBotao;
+        return;
+      }
+      var idGrupo = gerarId();
+      var valorParcela = estado.tipoAtivo === "parcelada" ? (valor / numParcelas) : valor;
+
+      for(var i = 0; i < numParcelas; i++){
+        var mesCalc = mesInicial + i;
+        var anoCalc = anoInicial + Math.floor(mesCalc / 12);
+        mesCalc = mesCalc % 12;
+
+        novasContas.push({
+          descricao: descricao,
+          valor: valorParcela,
+          dia: dia,
+          mes: mesCalc,
+          ano: anoCalc,
+          status: "pendente",
+          grupo: idGrupo,
+          parcelaInfo: (i+1) + "/" + numParcelas
+        });
+      }
+    }
+
+    var resultado = await inserirContas(novasContas);
+
+    botaoSalvar.disabled = false;
+    botaoSalvar.textContent = textoOriginalBotao;
+
+    if(resultado === null){
+      return; // erro ja avisado pela camada de dados
+    }
+
+    if(supabaseConfigurado){
+      estado.contas = estado.contas.concat(resultado);
+    }
+
+    document.getElementById("formConta").reset();
+    preencherSelectsFormulario();
+    renderizarLista();
+    fundoAdicionar.classList.remove("aberto");
+  });
+
+  // --- renderizar lista do mes atual ---
+  function renderizarLista(){
+    var container = document.getElementById("listaContas");
+    container.innerHTML = "";
+
+    var contasDoMes = estado.contas.filter(function(c){
+      return c.mes === estado.mes && c.ano === estado.ano;
+    });
+
+    contasDoMes.sort(function(a, b){
+      var diaA = a.dia || 99;
+      var diaB = b.dia || 99;
+      if(diaA !== diaB) return diaA - diaB;
+      return a.descricao.localeCompare(b.descricao);
+    });
+
+    var totalPrevisto = 0, totalPago = 0, totalPendente = 0;
+    contasDoMes.forEach(function(c){
+      totalPrevisto += c.valor;
+      if(c.status === "pago") totalPago += c.valor; else totalPendente += c.valor;
+    });
+
+    document.getElementById("totalPrevisto").textContent = formatarMoeda(totalPrevisto);
+    document.getElementById("totalPago").textContent = formatarMoeda(totalPago);
+    document.getElementById("totalPendente").textContent = formatarMoeda(totalPendente);
+
+    var percentual = totalPrevisto > 0 ? Math.round((totalPago / totalPrevisto) * 100) : 0;
+    document.getElementById("barraPreenchida").style.width = percentual + "%";
+    document.getElementById("progressoPercentual").textContent = percentual + "%";
+
+    if(contasDoMes.length === 0){
+      container.innerHTML = '<div class="vazio">Nenhuma conta cadastrada para este mes ainda.<br>Use o botao "+ Adicionar conta" acima para adicionar a primeira.</div>';
+      return;
+    }
+
+    contasDoMes.forEach(function(c){
+      var item = document.createElement("div");
+      item.className = "conta-item " + c.status;
+
+      var subtexto = "";
+      if(c.dia) subtexto += "Vencimento: dia " + c.dia;
+      if(c.parcelaInfo) subtexto += (subtexto ? " · " : "") + "Parcela " + c.parcelaInfo;
+
+      item.innerHTML =
+        '<div class="conta-info">' +
+          '<div class="conta-desc">' + escaparHtml(c.descricao) + '</div>' +
+          (subtexto ? '<div class="conta-sub">' + subtexto + '</div>' : '') +
+        '</div>' +
+        '<div class="conta-valor">' + formatarMoeda(c.valor) + '</div>' +
+        '<div class="conta-acoes">' +
+          '<button class="btn-status ' + c.status + '" data-id="' + c.id + '" data-acao="status">' +
+            (c.status === "pago" ? "Pago ✓" : "Pendente") +
+          '</button>' +
+          '<button class="btn-icone" data-id="' + c.id + '" data-acao="editar" title="Editar">&#9998;</button>' +
+          '<button class="btn-icone excluir" data-id="' + c.id + '" data-acao="excluir" title="Excluir">&#10005;</button>' +
+        '</div>';
+
+      container.appendChild(item);
+    });
+  }
+
+  document.getElementById("listaContas").addEventListener("click", async function(evento){
+    var alvo = evento.target;
+    if(alvo.tagName !== "BUTTON") return;
+    var id = alvo.getAttribute("data-id");
+    var acao = alvo.getAttribute("data-acao");
+    var conta = estado.contas.find(function(c){ return c.id === id; });
+    if(!conta) return;
+
+    if(acao === "status"){
+      var statusAnterior = conta.status;
+      var novoStatus = conta.status === "pago" ? "pendente" : "pago";
+      conta.status = novoStatus;
+      renderizarLista();
+      var ok = await atualizarContaBd(id, {status: novoStatus});
+      if(!ok){
+        conta.status = statusAnterior;
+        renderizarLista();
+      }
+    } else if(acao === "excluir"){
+      if(confirm('Excluir a conta "' + conta.descricao + '"?')){
+        var ok2 = await excluirContaBd(id);
+        if(ok2){
+          estado.contas = estado.contas.filter(function(c){ return c.id !== id; });
+          renderizarLista();
+        }
+      }
+    } else if(acao === "editar"){
+      abrirEdicao(conta);
+    }
+  });
+
+  // --- modal de edicao ---
+  function abrirEdicao(conta){
+    estado.editandoId = conta.id;
+    document.getElementById("editDescricao").value = conta.descricao;
+    document.getElementById("editValor").value = conta.valor;
+    document.getElementById("editDia").value = conta.dia || "";
+    document.getElementById("fundoModal").classList.add("aberto");
+  }
+
+  document.getElementById("btnCancelarEdicao").addEventListener("click", function(){
+    document.getElementById("fundoModal").classList.remove("aberto");
+    estado.editandoId = null;
+  });
+
+  document.getElementById("btnSalvarEdicao").addEventListener("click", async function(){
+    var conta = estado.contas.find(function(c){ return c.id === estado.editandoId; });
+    if(!conta) return;
+
+    var novaDescricao = document.getElementById("editDescricao").value.trim();
+    var novoValor = parseFloat(document.getElementById("editValor").value);
+    var novoDia = document.getElementById("editDia").value ? parseInt(document.getElementById("editDia").value, 10) : null;
+
+    if(!novaDescricao || isNaN(novoValor) || novoValor <= 0){
+      alert("Preencha a descricao e um valor valido.");
+      return;
+    }
+
+    var botao = document.getElementById("btnSalvarEdicao");
+    botao.disabled = true;
+    botao.textContent = "Salvando...";
+
+    var ok = await atualizarContaBd(conta.id, {
+      descricao: novaDescricao,
+      valor: novoValor,
+      dia: novoDia
+    });
+
+    botao.disabled = false;
+    botao.textContent = "Salvar";
+
+    if(!ok) return;
+
+    conta.descricao = novaDescricao;
+    conta.valor = novoValor;
+    conta.dia = novoDia;
+
+    document.getElementById("fundoModal").classList.remove("aberto");
+    estado.editandoId = null;
+    renderizarLista();
+  });
+
+  // --- Modal de relatorio / geracao de PDF via impressao ---
+  var fundoRelatorio = document.getElementById("fundoModalRelatorio");
+  document.getElementById("btnAbrirRelatorio").addEventListener("click", function(){
+    fundoRelatorio.classList.add("aberto");
+  });
+  document.getElementById("btnFecharRelatorio").addEventListener("click", function(){
+    fundoRelatorio.classList.remove("aberto");
+  });
+  fundoRelatorio.addEventListener("click", function(evento){
+    if(evento.target === fundoRelatorio) fundoRelatorio.classList.remove("aberto");
+  });
+
+  function montarLinhasTabela(contas){
+    var html = "";
+    contas.forEach(function(c){
+      var venc = c.dia ? ("Dia " + c.dia) : "-";
+      var parcela = c.parcelaInfo ? c.parcelaInfo : "-";
+      html += '<tr class="' + (c.status === "pago" ? "rel-pago" : "rel-pendente") + '">' +
+        '<td>' + escaparHtml(c.descricao) + '</td>' +
+        '<td>' + venc + '</td>' +
+        '<td>' + parcela + '</td>' +
+        '<td>' + formatarMoeda(c.valor) + '</td>' +
+        '<td>' + (c.status === "pago" ? "Pago" : "Pendente") + '</td>' +
+        '</tr>';
+    });
+    return html;
+  }
+
+  function montarResumoHtml(contas){
+    var totalPrevisto = 0, totalPago = 0, totalPendente = 0;
+    contas.forEach(function(c){
+      totalPrevisto += c.valor;
+      if(c.status === "pago") totalPago += c.valor; else totalPendente += c.valor;
+    });
+    return '<div class="rel-resumo">' +
+      '<div><div class="rot">Previsto</div><div class="val">' + formatarMoeda(totalPrevisto) + '</div></div>' +
+      '<div><div class="rot">Pago</div><div class="val">' + formatarMoeda(totalPago) + '</div></div>' +
+      '<div><div class="rot">Pendente</div><div class="val">' + formatarMoeda(totalPendente) + '</div></div>' +
+      '</div>';
+  }
+
+  function gerarPdf(){
+    window.focus();
+    setTimeout(function(){ window.print(); }, 100);
+  }
+
+  document.getElementById("btnRelatorioMes").addEventListener("click", function(){
+    var contasDoMes = estado.contas.filter(function(c){
+      return c.mes === estado.mes && c.ano === estado.ano;
+    }).sort(function(a,b){
+      var da = a.dia || 99, db = b.dia || 99;
+      return da - db;
+    });
+
+    var area = document.getElementById("areaImpressao");
+    area.innerHTML =
+      '<div class="rel-cabecalho">' +
+        '<h2>Relatorio de Gastos - ' + NOMES_MES[estado.mes] + ' de ' + estado.ano + '</h2>' +
+        '<p>Gerado em ' + new Date().toLocaleDateString("pt-BR") + '</p>' +
+      '</div>' +
+      montarResumoHtml(contasDoMes) +
+      (contasDoMes.length === 0
+        ? '<p>Nenhuma conta cadastrada neste mes.</p>'
+        : '<table class="rel-tabela"><thead><tr><th>Descricao</th><th>Vencimento</th><th>Parcela</th><th>Valor</th><th>Status</th></tr></thead><tbody>' +
+          montarLinhasTabela(contasDoMes) + '</tbody></table>');
+
+    fundoRelatorio.classList.remove("aberto");
+    gerarPdf();
+  });
+
+  document.getElementById("btnRelatorioAno").addEventListener("click", function(){
+    var contasDoAno = estado.contas.filter(function(c){ return c.ano === estado.ano; });
+
+    var area = document.getElementById("areaImpressao");
+    var html = '<div class="rel-cabecalho">' +
+        '<h2>Relatorio de Gastos - Ano de ' + estado.ano + '</h2>' +
+        '<p>Gerado em ' + new Date().toLocaleDateString("pt-BR") + '</p>' +
+      '</div>' +
+      montarResumoHtml(contasDoAno);
+
+    if(contasDoAno.length === 0){
+      html += '<p>Nenhuma conta cadastrada neste ano.</p>';
+    } else {
+      for(var m = 0; m < 12; m++){
+        var contasMes = contasDoAno.filter(function(c){ return c.mes === m; })
+          .sort(function(a,b){ var da=a.dia||99, db=b.dia||99; return da-db; });
+        if(contasMes.length === 0) continue;
+        html += '<div class="rel-mes-titulo">' + NOMES_MES[m] + '</div>';
+        html += '<table class="rel-tabela"><thead><tr><th>Descricao</th><th>Vencimento</th><th>Parcela</th><th>Valor</th><th>Status</th></tr></thead><tbody>' +
+          montarLinhasTabela(contasMes) + '</tbody></table>';
+      }
+    }
+    area.innerHTML = html;
+
+    fundoRelatorio.classList.remove("aberto");
+    gerarPdf();
+  });
+
+  // fechar modais com a tecla ESC
+  document.addEventListener("keydown", function(evento){
+    if(evento.key === "Escape"){
+      fundoAdicionar.classList.remove("aberto");
+      fundoRelatorio.classList.remove("aberto");
+      document.getElementById("fundoModal").classList.remove("aberto");
+    }
+  });
+
+  // --- inicializacao ---
+  async function iniciar(){
+    preencherSelectsFormulario();
+    atualizarTituloMes();
+    document.getElementById("listaContas").innerHTML =
+      '<div class="vazio">Carregando suas contas...</div>';
+    estado.contas = await buscarTodasContas();
+    renderizarLista();
+  }
+  iniciar();
+})();
+</script>
+
+</body>
+</html>
