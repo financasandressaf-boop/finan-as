@@ -397,9 +397,6 @@
     .conta-acoes{ flex: 1 1 100%; justify-content: flex-start; }
     .btn-status{ flex: 1 1 auto; }
 
-    .modal{ padding: 18px 16px; max-height: 85vh; }
-    .modal-largo{ max-width: 100%; }
-
     .rel-resumo{ flex-direction: column; }
 
     .fab{ width: 56px; height: 56px; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); }
@@ -574,48 +571,86 @@
     display:none;
     position: fixed;
     inset: 0;
-    background: rgba(28,58,74,0.45);
+    background: rgba(15,10,20,0.55);
     align-items: center;
     justify-content: center;
     z-index: 50;
     padding: 16px;
-    overflow-y: auto;
   }
   .fundo-modal.aberto{ display:flex; }
   .modal{
-    background: #fff;
-    border-radius: 14px;
-    padding: 22px;
+    background: var(--card);
+    color: var(--navy);
+    border-radius: 20px;
     max-width: 420px;
     width: 100%;
     box-shadow: 0 10px 30px rgba(0,0,0,0.25);
     max-height: 90vh;
-    overflow-y: auto;
+    display:flex;
+    flex-direction: column;
+    overflow: hidden;
   }
   .modal.modal-largo{ max-width: 560px; }
+
   .modal-cabecalho{
     display:flex;
     justify-content: space-between;
     align-items:center;
-    margin-bottom: 8px;
+    gap: 12px;
+    padding: 20px 20px 14px 20px;
+    flex-shrink: 0;
+    border-bottom: 1px solid var(--border);
   }
+  .modal-cabecalho h2, .modal-cabecalho h3{ margin:0; font-size: 21px; }
+
   .btn-fechar-modal{
-    background: none;
+    background: var(--red-soft);
     border: none;
-    font-size: 22px;
+    font-size: 20px;
+    font-weight: 800;
     cursor: pointer;
-    color: var(--navy-soft);
-    width: 36px;
-    height: 36px;
+    color: var(--red);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink: 0;
   }
+  .btn-fechar-modal:hover{ background: var(--red); color:#fff; }
+  .btn-fechar-modal:active{ transform: scale(0.92); }
+
+  /* corpo com rolagem; formulario vira coluna flexivel para o rodape colar embaixo */
+  .modal-corpo{
+    padding: 18px 20px;
+    overflow-y: auto;
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+  .modal form{
+    display:flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+  }
+  .modal-rodape{
+    flex-shrink: 0;
+    padding: 14px 20px;
+    padding-bottom: max(14px, env(safe-area-inset-bottom, 0px));
+    border-top: 1px solid var(--border);
+    background: var(--card);
+  }
+  .modal-rodape .btn-principal{ margin: 0; }
+
   .modal-acoes{
     display:flex;
     gap: 10px;
-    margin-top: 10px;
   }
   .btn-secundario{
-    background: #ECEFEE;
-    color: var(--navy);
+    background: var(--primaria-suave);
+    color: var(--primaria-escura);
     border: none;
     padding: 14px 22px;
     font-size: 16px;
@@ -623,6 +658,92 @@
     border-radius: 10px;
     cursor: pointer;
     flex: 1;
+  }
+  .btn-perigo{
+    background: var(--red);
+    color: #fff;
+    border: none;
+    padding: 14px 22px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+  .btn-perigo:hover{ filter: brightness(0.92); }
+  .btn-perigo:disabled{ opacity: 0.6; cursor: default; }
+
+  /* --- Modal de confirmar exclusao --- */
+  .excluir-icone-alerta{
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--red-soft);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size: 26px;
+    margin: 4px auto 16px auto;
+  }
+  .excluir-cartao-conta{
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+    text-align:center;
+    margin-bottom: 16px;
+  }
+  .excluir-conta-desc{
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--navy);
+  }
+  .excluir-conta-valor{
+    font-size: 22px;
+    font-weight: 800;
+    font-family: "Sora", sans-serif;
+    font-variant-numeric: tabular-nums;
+    color: var(--navy);
+    margin: 4px 0;
+  }
+  .excluir-conta-sub{
+    font-size: 14px;
+    color: var(--navy-soft);
+  }
+  .excluir-texto{
+    text-align:center;
+    font-size: 15px;
+    color: var(--navy-soft);
+    margin: 0 0 4px 0;
+  }
+  .excluir-aviso-grupo{
+    background: var(--amber-soft);
+    color: var(--amber);
+    border: 1px solid var(--amber);
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-size: 14px;
+    line-height: 1.5;
+    margin-top: 14px;
+  }
+  .excluir-aviso-grupo b{ color: inherit; }
+
+  /* --- Em telas de celular, os modais viram uma tela cheia (mais facil de usar) --- */
+  @media (max-width: 600px){
+    .fundo-modal{ padding: 0; }
+    .modal, .modal.modal-largo{
+      max-width: 100%;
+      width: 100%;
+      height: 100%;
+      max-height: 100%;
+      border-radius: 0;
+    }
+    .modal-cabecalho{
+      padding: max(18px, env(safe-area-inset-top, 0px)) 16px 14px 16px;
+    }
+    .modal-cabecalho h2, .modal-cabecalho h3{ font-size: 20px; }
+    .btn-fechar-modal{ width: 44px; height: 44px; font-size: 22px; }
+    .modal-corpo{ padding: 16px; }
+    .modal-rodape{ padding: 14px 16px max(14px, env(safe-area-inset-bottom, 0px)) 16px; }
   }
 
   /* --- Opcoes de relatorio --- */
@@ -864,54 +985,58 @@
 <div class="fundo-modal" id="fundoModalAdicionar">
   <div class="modal modal-largo">
     <div class="modal-cabecalho">
-      <h2 style="margin:0;">Adicionar uma conta</h2>
+      <h2>Adicionar uma conta</h2>
       <button class="btn-fechar-modal" id="btnFecharAdicionar" title="Fechar">&#10005;</button>
     </div>
 
-    <div class="tipos-conta">
-      <button class="tipo-btn ativo" data-tipo="unica">Conta unica</button>
-      <button class="tipo-btn" data-tipo="parcelada">Compra parcelada</button>
-      <button class="tipo-btn" data-tipo="fixa">Despesa fixa por varios meses</button>
-    </div>
-    <div class="tipo-desc" id="tipoDescricao">
-      Uma conta que acontece uma unica vez, em um mes especifico.
-    </div>
-
     <form id="formConta">
-      <div class="campo">
-        <label for="descricao">Descricao da conta</label>
-        <input type="text" id="descricao" placeholder="Ex: Conta de luz, Cartao de credito, TV nova..." required>
+      <div class="modal-corpo">
+        <div class="tipos-conta">
+          <button class="tipo-btn ativo" data-tipo="unica" type="button">Conta unica</button>
+          <button class="tipo-btn" data-tipo="parcelada" type="button">Compra parcelada</button>
+          <button class="tipo-btn" data-tipo="fixa" type="button">Despesa fixa por varios meses</button>
+        </div>
+        <div class="tipo-desc" id="tipoDescricao">
+          Uma conta que acontece uma unica vez, em um mes especifico.
+        </div>
+
+        <div class="campo">
+          <label for="descricao">Descricao da conta</label>
+          <input type="text" id="descricao" placeholder="Ex: Conta de luz, Cartao de credito, TV nova..." required>
+        </div>
+
+        <div class="linha-campos">
+          <div class="campo">
+            <label id="rotuloValor" for="valor">Valor (R$)</label>
+            <input type="number" id="valor" step="0.01" min="0" placeholder="0,00" required>
+          </div>
+          <div class="campo">
+            <label for="diaVencimento">Dia do vencimento (opcional)</label>
+            <input type="number" id="diaVencimento" min="1" max="31" placeholder="Ex: 10">
+          </div>
+        </div>
+
+        <div class="linha-campos">
+          <div class="campo">
+            <label for="mesInicial">Mes inicial</label>
+            <select id="mesInicial"></select>
+          </div>
+          <div class="campo">
+            <label for="anoInicial">Ano inicial</label>
+            <select id="anoInicial"></select>
+          </div>
+        </div>
+
+        <div class="campo" id="campoParcelas" style="display:none;">
+          <label id="rotuloParcelas" for="numParcelas">Numero de parcelas</label>
+          <input type="number" id="numParcelas" min="2" max="60" placeholder="Ex: 10">
+          <div class="ajuda" id="ajudaParcelas"></div>
+        </div>
       </div>
 
-      <div class="linha-campos">
-        <div class="campo">
-          <label id="rotuloValor" for="valor">Valor (R$)</label>
-          <input type="number" id="valor" step="0.01" min="0" placeholder="0,00" required>
-        </div>
-        <div class="campo">
-          <label for="diaVencimento">Dia do vencimento (opcional)</label>
-          <input type="number" id="diaVencimento" min="1" max="31" placeholder="Ex: 10">
-        </div>
+      <div class="modal-rodape">
+        <button type="submit" class="btn-principal">Adicionar conta</button>
       </div>
-
-      <div class="linha-campos">
-        <div class="campo">
-          <label for="mesInicial">Mes inicial</label>
-          <select id="mesInicial"></select>
-        </div>
-        <div class="campo">
-          <label for="anoInicial">Ano inicial</label>
-          <select id="anoInicial"></select>
-        </div>
-      </div>
-
-      <div class="campo" id="campoParcelas" style="display:none;">
-        <label id="rotuloParcelas" for="numParcelas">Numero de parcelas</label>
-        <input type="number" id="numParcelas" min="2" max="60" placeholder="Ex: 10">
-        <div class="ajuda" id="ajudaParcelas"></div>
-      </div>
-
-      <button type="submit" class="btn-principal">Adicionar conta</button>
     </form>
   </div>
 </div>
@@ -919,24 +1044,62 @@
 <!-- Modal: editar conta -->
 <div class="fundo-modal" id="fundoModal">
   <div class="modal">
-    <h3>Editar conta</h3>
-    <div class="campo">
-      <label for="editDescricao">Descricao</label>
-      <input type="text" id="editDescricao">
+    <div class="modal-cabecalho">
+      <h3>Editar conta</h3>
+      <button class="btn-fechar-modal" id="btnFecharEdicao" title="Fechar">&#10005;</button>
     </div>
-    <div class="linha-campos">
+    <div class="modal-corpo">
       <div class="campo">
-        <label for="editValor">Valor (R$)</label>
-        <input type="number" id="editValor" step="0.01" min="0">
+        <label for="editDescricao">Descricao</label>
+        <input type="text" id="editDescricao">
       </div>
-      <div class="campo">
-        <label for="editDia">Dia do vencimento</label>
-        <input type="number" id="editDia" min="1" max="31">
+      <div class="linha-campos">
+        <div class="campo">
+          <label for="editValor">Valor (R$)</label>
+          <input type="number" id="editValor" step="0.01" min="0">
+        </div>
+        <div class="campo">
+          <label for="editDia">Dia do vencimento</label>
+          <input type="number" id="editDia" min="1" max="31">
+        </div>
       </div>
     </div>
-    <div class="modal-acoes">
-      <button class="btn-secundario" id="btnCancelarEdicao">Cancelar</button>
-      <button class="btn-principal" id="btnSalvarEdicao" style="flex:1;">Salvar</button>
+    <div class="modal-rodape">
+      <div class="modal-acoes">
+        <button class="btn-secundario" id="btnCancelarEdicao">Cancelar</button>
+        <button class="btn-principal" id="btnSalvarEdicao" style="flex:1;">Salvar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: confirmar exclusao de conta -->
+<div class="fundo-modal" id="fundoModalExcluir">
+  <div class="modal">
+    <div class="modal-cabecalho">
+      <h3>Excluir conta?</h3>
+      <button class="btn-fechar-modal" id="btnFecharExcluir" title="Fechar">&#10005;</button>
+    </div>
+    <div class="modal-corpo">
+      <div class="excluir-icone-alerta">🗑️</div>
+
+      <div class="excluir-cartao-conta">
+        <div class="excluir-conta-desc" id="excluirDescricao">Descricao da conta</div>
+        <div class="excluir-conta-valor" id="excluirValor">R$ 0,00</div>
+        <div class="excluir-conta-sub" id="excluirDetalhes">Agosto de 2026</div>
+      </div>
+
+      <p class="excluir-texto" id="excluirTextoPrincipal">Tem certeza que deseja excluir esta conta? Essa acao nao pode ser desfeita.</p>
+
+      <div class="excluir-aviso-grupo" id="excluirAvisoGrupo" style="display:none;">
+        ⚠️ Esta conta faz parte de um <b>parcelamento</b>. Ao confirmar, <b>todas as parcelas</b> desta compra serao excluidas — as que ja foram pagas e as que ainda estao pendentes, em todos os meses.
+      </div>
+    </div>
+    <div class="modal-rodape">
+      <div class="modal-acoes">
+        <button class="btn-secundario" id="btnCancelarExcluir">Cancelar</button>
+        <button class="btn-perigo" id="btnConfirmarExcluir" style="flex:1;">Excluir</button>
+      </div>
     </div>
   </div>
 </div>
@@ -945,19 +1108,21 @@
 <div class="fundo-modal" id="fundoModalRelatorio">
   <div class="modal">
     <div class="modal-cabecalho">
-      <h3 style="margin:0;">Baixar relatorio em PDF</h3>
+      <h3>Baixar relatorio em PDF</h3>
       <button class="btn-fechar-modal" id="btnFecharRelatorio" title="Fechar">&#10005;</button>
     </div>
-    <p style="font-size:15px; color:var(--navy-soft);">Escolha o que deseja incluir no relatorio. Depois, na janela de impressao, selecione "Salvar como PDF" e escolha onde guardar o arquivo.</p>
-    <div class="opcoes-relatorio">
-      <button class="opcao-relatorio" id="btnRelatorioMes">
-        <b id="rotuloRelatorioMes">Relatorio do mes atual</b>
-        <span>Somente as contas do mes que esta sendo visualizado</span>
-      </button>
-      <button class="opcao-relatorio" id="btnRelatorioAno">
-        <b>Relatorio do ano todo</b>
-        <span>Todas as contas cadastradas no ano, organizadas mes a mes</span>
-      </button>
+    <div class="modal-corpo">
+      <p style="font-size:15px; color:var(--navy-soft); margin-top:0;">Escolha o que deseja incluir no relatorio. Depois, na janela de impressao, selecione "Salvar como PDF" e escolha onde guardar o arquivo.</p>
+      <div class="opcoes-relatorio">
+        <button class="opcao-relatorio" id="btnRelatorioMes">
+          <b id="rotuloRelatorioMes">Relatorio do mes atual</b>
+          <span>Somente as contas do mes que esta sendo visualizado</span>
+        </button>
+        <button class="opcao-relatorio" id="btnRelatorioAno">
+          <b>Relatorio do ano todo</b>
+          <span>Todas as contas cadastradas no ano, organizadas mes a mes</span>
+        </button>
+      </div>
     </div>
   </div>
 </div>
@@ -982,8 +1147,8 @@
   // Enquanto nao configurar, o site funciona normalmente salvando os dados
   // so neste navegador (modo local), como antes.
   // ======================================================================
-  var SUPABASE_URL = "https://xtfzusdvbfjoezbkstkq.supabase.co";
-  var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh0Znp1c2R2YmZqb2V6YmtzdGtxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM0NjgxMzQsImV4cCI6MjA5OTA0NDEzNH0.x0DFqbKWclrTVDF4jKQwJ4XkYHXTSmgLhMU9vZJohXo";
+  var SUPABASE_URL = "COLE_AQUI_A_URL_DO_SEU_PROJETO_SUPABASE";
+  var SUPABASE_ANON_KEY = "COLE_AQUI_A_CHAVE_ANON_PUBLIC";
 
   var supabaseConfigurado = SUPABASE_URL.indexOf("COLE_AQUI") === -1 && SUPABASE_ANON_KEY.indexOf("COLE_AQUI") === -1;
   var supabaseClient = null;
@@ -1164,6 +1329,20 @@
       var resp = await supabaseClient.from("contas").delete().eq("id", id);
       if(resp.error){
         mostrarAviso("Nao foi possivel excluir no Supabase. Detalhe: " + resp.error.message, "erro");
+        return false;
+      }
+      return true;
+    }
+    salvarContasLocal();
+    return true;
+  }
+
+  // Exclui todas as parcelas de um mesmo parcelamento (pagas e pendentes, em todos os meses)
+  async function excluirGrupoBd(grupoId){
+    if(supabaseConfigurado && supabaseClient){
+      var resp = await supabaseClient.from("contas").delete().eq("grupo", grupoId);
+      if(resp.error){
+        mostrarAviso("Nao foi possivel excluir o parcelamento no Supabase. Detalhe: " + resp.error.message, "erro");
         return false;
       }
       return true;
@@ -1505,13 +1684,7 @@
         renderizarLista();
       }
     } else if(acao === "excluir"){
-      if(confirm('Excluir a conta "' + conta.descricao + '"?')){
-        var ok2 = await excluirContaBd(id);
-        if(ok2){
-          estado.contas = estado.contas.filter(function(c){ return c.id !== id; });
-          renderizarLista();
-        }
-      }
+      abrirModalExcluir(conta);
     } else if(acao === "editar"){
       abrirEdicao(conta);
     }
@@ -1529,6 +1702,18 @@
   document.getElementById("btnCancelarEdicao").addEventListener("click", function(){
     document.getElementById("fundoModal").classList.remove("aberto");
     estado.editandoId = null;
+  });
+
+  document.getElementById("btnFecharEdicao").addEventListener("click", function(){
+    document.getElementById("fundoModal").classList.remove("aberto");
+    estado.editandoId = null;
+  });
+
+  document.getElementById("fundoModal").addEventListener("click", function(evento){
+    if(evento.target === document.getElementById("fundoModal")){
+      document.getElementById("fundoModal").classList.remove("aberto");
+      estado.editandoId = null;
+    }
   });
 
   document.getElementById("btnSalvarEdicao").addEventListener("click", async function(){
@@ -1565,6 +1750,81 @@
 
     document.getElementById("fundoModal").classList.remove("aberto");
     estado.editandoId = null;
+    renderizarLista();
+  });
+
+  // --- Modal de confirmar exclusao ---
+  var fundoExcluir = document.getElementById("fundoModalExcluir");
+  var estadoExclusao = { conta: null };
+
+  function abrirModalExcluir(conta){
+    estadoExclusao.conta = conta;
+
+    document.getElementById("excluirDescricao").textContent = conta.descricao;
+    document.getElementById("excluirValor").textContent = formatarMoeda(conta.valor);
+
+    var detalhes = NOMES_MES[conta.mes] + " de " + conta.ano;
+    if(conta.dia) detalhes += " · Vencimento dia " + conta.dia;
+    if(conta.parcelaInfo) detalhes += " · Parcela " + conta.parcelaInfo;
+    document.getElementById("excluirDetalhes").textContent = detalhes;
+
+    var avisoGrupo = document.getElementById("excluirAvisoGrupo");
+    var botaoConfirmar = document.getElementById("btnConfirmarExcluir");
+    var textoPrincipal = document.getElementById("excluirTextoPrincipal");
+
+    if(conta.grupo){
+      var totalParcelas = estado.contas.filter(function(c){ return c.grupo === conta.grupo; }).length;
+      avisoGrupo.style.display = "block";
+      textoPrincipal.textContent = "Esta conta esta dividida em " + totalParcelas + " parcela(s).";
+      botaoConfirmar.textContent = "Excluir todas as parcelas";
+    } else {
+      avisoGrupo.style.display = "none";
+      textoPrincipal.textContent = "Tem certeza que deseja excluir esta conta? Essa acao nao pode ser desfeita.";
+      botaoConfirmar.textContent = "Excluir";
+    }
+
+    fundoExcluir.classList.add("aberto");
+  }
+
+  function fecharModalExcluir(){
+    fundoExcluir.classList.remove("aberto");
+    estadoExclusao.conta = null;
+  }
+
+  document.getElementById("btnCancelarExcluir").addEventListener("click", fecharModalExcluir);
+  document.getElementById("btnFecharExcluir").addEventListener("click", fecharModalExcluir);
+  fundoExcluir.addEventListener("click", function(evento){
+    if(evento.target === fundoExcluir) fecharModalExcluir();
+  });
+
+  document.getElementById("btnConfirmarExcluir").addEventListener("click", async function(){
+    var conta = estadoExclusao.conta;
+    if(!conta) return;
+
+    var botao = document.getElementById("btnConfirmarExcluir");
+    var textoOriginal = botao.textContent;
+    botao.disabled = true;
+    botao.textContent = "Excluindo...";
+
+    var sucesso;
+    if(conta.grupo){
+      sucesso = await excluirGrupoBd(conta.grupo);
+      if(sucesso){
+        estado.contas = estado.contas.filter(function(c){ return c.grupo !== conta.grupo; });
+      }
+    } else {
+      sucesso = await excluirContaBd(conta.id);
+      if(sucesso){
+        estado.contas = estado.contas.filter(function(c){ return c.id !== conta.id; });
+      }
+    }
+
+    botao.disabled = false;
+    botao.textContent = textoOriginal;
+
+    if(!sucesso) return;
+
+    fecharModalExcluir();
     renderizarLista();
   });
 
