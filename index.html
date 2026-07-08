@@ -49,25 +49,25 @@
   }
 
   :root[data-tema="escuro"]{
-    --bg: #121018;
-    --card: #1D1A26;
-    --border: #322D40;
-    --navy: #F4F1FA;
-    --navy-soft: #A79EBE;
-    --teal: #33D18C;
-    --teal-dark: #1FAE73;
-    --teal-soft: #16342A;
-    --amber: #F5A947;
-    --amber-soft: #3A2B14;
-    --red: #F0767B;
-    --red-soft: #3A1E20;
-    --shadow: 0 4px 18px rgba(0,0,0,0.35);
+    --bg: #0E0C15;
+    --card: #1E1B29;
+    --border: #363047;
+    --navy: #ECE9F6;
+    --navy-soft: #B4AAC9;
+    --teal: #34D399;
+    --teal-dark: #23B583;
+    --teal-soft: #17352A;
+    --amber: #F7B155;
+    --amber-soft: #3D2C15;
+    --red: #F1787D;
+    --red-soft: #3D1F23;
+    --shadow: 0 6px 20px rgba(0,0,0,0.45);
 
-    --primaria: #A876F7;
-    --primaria-escura: #8A5CF0;
-    --primaria-clara: #C4A5FA;
+    --primaria: #A47BF0;
+    --primaria-escura: #8657E6;
+    --primaria-clara: #C7A8FB;
     --primaria-suave: #2A2140;
-    --gradiente-marca: linear-gradient(135deg, #8A5CF0 0%, #5F27C9 100%);
+    --gradiente-marca: linear-gradient(135deg, #7C4FE0 0%, #55279C 100%);
   }
 
   * { box-sizing: border-box; }
@@ -695,57 +695,86 @@
     body{ background:#fff; font-size: 13px; padding:0; }
   }
 
+  /* ======================================================================
+     Relatorio em PDF: estas regras usam cores fixas (preto/cinza/branco) de
+     proposito, para o relatorio impresso ficar sempre igual e legivel,
+     independente do tema (claro/escuro) que estiver ativo na tela.
+     ====================================================================== */
+  #areaImpressao{
+    display:none;
+    color: #111111;
+    background: #ffffff;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  #areaImpressao *{
+    color: #111111;
+  }
   .rel-cabecalho{
     text-align:center;
-    margin-bottom: 20px;
-    border-bottom: 3px solid #1C3A4A;
+    margin-bottom: 22px;
+    border-bottom: 3px solid #111111;
     padding-bottom: 14px;
   }
   .rel-cabecalho h2{
-    font-size: 24px;
+    font-size: 22px;
     margin-bottom: 4px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
   }
-  .rel-cabecalho p{ margin:0; color:#4A6572; }
+  .rel-cabecalho p{ margin:0; color:#555555 !important; font-size: 13px; }
   .rel-resumo{
     display:flex;
     justify-content: space-around;
-    margin-bottom: 18px;
+    margin-bottom: 20px;
     gap: 10px;
   }
   .rel-resumo div{
     text-align:center;
-    border: 1px solid #D8E1DF;
-    border-radius: 8px;
+    border: 1px solid #111111;
+    border-radius: 6px;
     padding: 10px 14px;
     flex:1;
   }
-  .rel-resumo .rot{ font-size:12px; color:#4A6572; text-transform:uppercase; }
-  .rel-resumo .val{ font-size:18px; font-weight:bold; }
+  .rel-resumo .rot{ font-size:11px; color:#555555 !important; text-transform:uppercase; letter-spacing: 0.04em; }
+  .rel-resumo .val{ font-size:18px; font-weight:800; }
   table.rel-tabela{
     width:100%;
     border-collapse: collapse;
-    margin-bottom: 22px;
+    margin-bottom: 24px;
   }
   table.rel-tabela th, table.rel-tabela td{
-    border: 1px solid #D8E1DF;
+    border: 1px solid #999999;
     padding: 8px 10px;
     text-align:left;
-    font-size: 13px;
+    font-size: 12.5px;
   }
   table.rel-tabela th{
-    background: #1C3A4A;
-    color: #fff;
+    background: #EAEAEA;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 10.5px;
+    letter-spacing: 0.03em;
   }
-  table.rel-tabela tr.rel-pago td{ color:#175B4E; }
-  table.rel-tabela tr.rel-pendente td{ color:#C9660B; }
+  table.rel-tabela tbody tr:nth-child(even){ background: #F7F7F7; }
+  table.rel-tabela .status-pago{ font-weight: 800; }
+  table.rel-tabela .status-pendente{ font-weight: 400; color:#555555 !important; }
   .rel-mes-titulo{
-    font-size: 16px;
-    font-weight:bold;
-    margin: 18px 0 8px 0;
-    color:#1C3A4A;
-    border-left: 4px solid #227A69;
+    font-size: 15px;
+    font-weight: 800;
+    margin: 20px 0 8px 0;
+    border-left: 4px solid #111111;
     padding-left: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
   }
+  .rel-rodape{
+    margin-top: 16px;
+    font-size: 11px;
+    color: #777777 !important;
+    text-align:center;
+  }
+
 
   .aviso{
     max-width: 980px;
@@ -1556,12 +1585,14 @@
     contas.forEach(function(c){
       var venc = c.dia ? ("Dia " + c.dia) : "-";
       var parcela = c.parcelaInfo ? c.parcelaInfo : "-";
+      var statusTexto = c.status === "pago" ? "✓ Pago" : "Pendente";
+      var statusClasse = c.status === "pago" ? "status-pago" : "status-pendente";
       html += '<tr class="' + (c.status === "pago" ? "rel-pago" : "rel-pendente") + '">' +
         '<td>' + escaparHtml(c.descricao) + '</td>' +
         '<td>' + venc + '</td>' +
         '<td>' + parcela + '</td>' +
         '<td>' + formatarMoeda(c.valor) + '</td>' +
-        '<td>' + (c.status === "pago" ? "Pago" : "Pendente") + '</td>' +
+        '<td class="' + statusClasse + '">' + statusTexto + '</td>' +
         '</tr>';
     });
     return html;
@@ -1603,7 +1634,8 @@
       (contasDoMes.length === 0
         ? '<p>Nenhuma conta cadastrada neste mes.</p>'
         : '<table class="rel-tabela"><thead><tr><th>Descricao</th><th>Vencimento</th><th>Parcela</th><th>Valor</th><th>Status</th></tr></thead><tbody>' +
-          montarLinhasTabela(contasDoMes) + '</tbody></table>');
+          montarLinhasTabela(contasDoMes) + '</tbody></table>') +
+      '<div class="rel-rodape">Relatorio gerado pelo sistema Meus Gastos em ' + new Date().toLocaleDateString("pt-BR") + '</div>';
 
     fundoRelatorio.classList.remove("aberto");
     gerarPdf();
@@ -1631,6 +1663,7 @@
           montarLinhasTabela(contasMes) + '</tbody></table>';
       }
     }
+    html += '<div class="rel-rodape">Relatorio gerado pelo sistema Meus Gastos em ' + new Date().toLocaleDateString("pt-BR") + '</div>';
     area.innerHTML = html;
 
     fundoRelatorio.classList.remove("aberto");
