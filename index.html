@@ -2,57 +2,165 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Controle de Gastos Mensais</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#7C3AED">
+<title>Meus Gastos</title>
+<script>
+// Aplica o tema o mais cedo possivel, para a tela nao "piscar" com o tema errado
+(function(){
+  try{
+    var salvo = localStorage.getItem("controleGastos_tema");
+    var tema = (salvo === "claro" || salvo === "escuro")
+      ? salvo
+      : ((window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) ? "escuro" : "claro");
+    document.documentElement.setAttribute("data-tema", tema);
+  } catch(e){}
+})();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg: #F2F6F5;
+    --bg: #F3F1F8;
     --card: #FFFFFF;
-    --border: #D8E1DF;
-    --navy: #1C3A4A;
-    --navy-soft: #4A6572;
-    --teal: #227A69;
-    --teal-dark: #175B4E;
-    --amber: #C9660B;
-    --amber-soft: #FBE9D9;
-    --teal-soft: #DCEFE9;
-    --red: #B23A3A;
-    --shadow: 0 2px 10px rgba(28,58,74,0.08);
+    --border: #E8E4F2;
+    --navy: #1A1523;
+    --navy-soft: #6B637A;
+    --teal: #12A570;
+    --teal-dark: #0C7F57;
+    --teal-soft: #DFF5EA;
+    --amber: #D9760B;
+    --amber-soft: #FCEBD9;
+    --red: #D2464C;
+    --red-soft: #FAE1E2;
+    --shadow: 0 4px 18px rgba(30,15,60,0.08);
+
+    --primaria: #7C3AED;
+    --primaria-escura: #5F27C9;
+    --primaria-clara: #9D6BF5;
+    --primaria-suave: #EFE6FD;
+    --gradiente-marca: linear-gradient(135deg, #8A3FFC 0%, #5F27C9 100%);
+
+    --tema-icone: "🌙";
+  }
+
+  :root[data-tema="escuro"]{
+    --bg: #121018;
+    --card: #1D1A26;
+    --border: #322D40;
+    --navy: #F4F1FA;
+    --navy-soft: #A79EBE;
+    --teal: #33D18C;
+    --teal-dark: #1FAE73;
+    --teal-soft: #16342A;
+    --amber: #F5A947;
+    --amber-soft: #3A2B14;
+    --red: #F0767B;
+    --red-soft: #3A1E20;
+    --shadow: 0 4px 18px rgba(0,0,0,0.35);
+
+    --primaria: #A876F7;
+    --primaria-escura: #8A5CF0;
+    --primaria-clara: #C4A5FA;
+    --primaria-suave: #2A2140;
+    --gradiente-marca: linear-gradient(135deg, #8A5CF0 0%, #5F27C9 100%);
   }
 
   * { box-sizing: border-box; }
 
+  .cartao, .conta-item, .modal, .nav-mes, .cartao-resumo, .aviso, .fundo-modal .modal,
+  .busca-input-wrap input, .campo input, .campo select, .tipo-btn, .chip-toggle, .opcao-relatorio{
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  }
+
+  html{
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    touch-action: manipulation;
+  }
+
   body{
     margin:0;
     background: var(--bg);
-    font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-family: "Inter", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     color: var(--navy);
-    font-size: 18px;
+    font-size: 17px;
     line-height: 1.4;
-    padding-bottom: 60px;
+    padding-bottom: 110px;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    transition: background-color 0.25s ease, color 0.25s ease;
   }
 
   h1, h2, h3 {
-    font-family: Georgia, "Times New Roman", serif;
+    font-family: "Sora", "Segoe UI", sans-serif;
     color: var(--navy);
     margin: 0 0 6px 0;
   }
 
   header.topo{
-    background: var(--navy);
+    background: var(--gradiente-marca);
     color: #fff;
-    padding: 22px 24px;
+    padding: 18px 20px calc(18px + env(safe-area-inset-top, 0px)) 20px;
+    padding-top: max(18px, env(safe-area-inset-top, 0px));
     box-shadow: var(--shadow);
+    position: sticky;
+    top: 0;
+    z-index: 30;
   }
-  header.topo h1{
+  .topo-linha{
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+    max-width: 980px;
+    margin: 0 auto;
+  }
+  .marca{
+    display:flex;
+    align-items:center;
+    gap: 10px;
+  }
+  .marca-icone{
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.18);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  .marca-texto{
+    font-family: "Sora", sans-serif;
+    font-weight: 700;
+    font-size: 20px;
     color: #fff;
-    font-size: 30px;
+    letter-spacing: -0.01em;
   }
-  header.topo p{
-    margin: 4px 0 0 0;
-    color: #CFE0DE;
-    font-size: 16px;
+  .topo-acoes{
+    display:flex;
+    gap: 8px;
   }
+  .btn-icone-topo{
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    border: none;
+    background: rgba(255,255,255,0.18);
+    color: #fff;
+    font-size: 19px;
+    cursor: pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .btn-icone-topo:hover{ background: rgba(255,255,255,0.3); }
+  .btn-icone-topo:active{ transform: scale(0.94); }
 
   main{
     max-width: 980px;
@@ -80,15 +188,15 @@
     height: 48px;
     border-radius: 10px;
     border: 1px solid var(--border);
-    background: var(--teal-soft);
-    color: var(--teal-dark);
+    background: var(--primaria-suave);
+    color: var(--primaria-escura);
     cursor:pointer;
     font-weight: bold;
   }
-  .nav-mes button:hover{ background: var(--teal); color:#fff; }
+  .nav-mes button:hover{ background: var(--primaria); color:#fff; }
   .nav-mes .titulo-mes{
     font-size: 26px;
-    font-family: Georgia, serif;
+    font-family: "Sora", sans-serif;
     min-width: 240px;
     text-align:center;
     font-weight: bold;
@@ -101,67 +209,53 @@
     font-family: "Segoe UI", sans-serif;
   }
 
-  /* --- Barra de acoes principais --- */
-  .acoes-principais{
-    display:flex;
-    gap: 12px;
-    flex-wrap: wrap;
-    margin-bottom: 20px;
-  }
-  .btn-acao-principal{
-    flex: 1 1 200px;
-    padding: 16px 18px;
-    font-size: 17px;
-    font-weight: bold;
-    border-radius: 12px;
-    border: none;
-    cursor: pointer;
-    box-shadow: var(--shadow);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap: 8px;
-  }
-  .btn-acao-principal.adicionar{
-    background: var(--teal);
-    color: #fff;
-  }
-  .btn-acao-principal.adicionar:hover{ background: var(--teal-dark); }
-  .btn-acao-principal.relatorio{
-    background: #fff;
-    color: var(--navy);
-    border: 2px solid var(--border);
-  }
-  .btn-acao-principal.relatorio:hover{ background: #ECEFEE; }
-
   /* --- Cartoes de resumo --- */
   .resumo{
-    display:grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
+    display:flex;
+    flex-direction: column;
+    gap: 14px;
     margin-bottom: 20px;
+  }
+  .resumo-linha{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
   }
   .cartao-resumo{
     background: var(--card);
     border: 1px solid var(--border);
-    border-radius: 14px;
+    border-radius: 18px;
     padding: 18px;
     box-shadow: var(--shadow);
     text-align:center;
   }
+  .cartao-resumo.cartao-saldo{
+    background: var(--gradiente-marca);
+    border: none;
+    text-align: left;
+    padding: 24px 24px;
+    box-shadow: 0 10px 26px rgba(124,58,237,0.30);
+  }
+  .cartao-resumo.cartao-saldo .rotulo{
+    color: rgba(255,255,255,0.8);
+  }
+  .cartao-resumo.cartao-saldo .valor{
+    color: #fff;
+    font-size: 32px;
+  }
   .cartao-resumo .rotulo{
-    font-size: 15px;
+    font-size: 14px;
     color: var(--navy-soft);
     text-transform: uppercase;
     letter-spacing: 0.03em;
     margin-bottom: 6px;
   }
   .cartao-resumo .valor{
-    font-size: 26px;
-    font-weight: bold;
-    font-family: Georgia, serif;
+    font-size: 22px;
+    font-weight: 700;
+    font-family: "Sora", sans-serif;
+    font-variant-numeric: tabular-nums;
   }
-  .cartao-resumo.previsto .valor{ color: var(--navy); }
   .cartao-resumo.pago .valor{ color: var(--teal-dark); }
   .cartao-resumo.pendente .valor{ color: var(--amber); }
 
@@ -225,9 +319,9 @@
     text-align:center;
   }
   .tipo-btn.ativo{
-    border-color: var(--teal);
-    background: var(--teal-soft);
-    color: var(--teal-dark);
+    border-color: var(--primaria);
+    background: var(--primaria-suave);
+    color: var(--primaria-escura);
   }
   .tipo-desc{
     font-size: 14px;
@@ -255,7 +349,7 @@
     color: var(--navy);
   }
   .campo input:focus, .campo select:focus{
-    outline: 3px solid var(--teal);
+    outline: 3px solid var(--primaria);
     outline-offset: 1px;
   }
   .linha-campos{
@@ -265,16 +359,16 @@
   }
   @media (max-width: 640px){
     .linha-campos{ grid-template-columns: 1fr; }
-    .resumo{ grid-template-columns: 1fr; }
   }
 
   /* --- Ajustes gerais para celular --- */
   @media (max-width: 600px){
     body{ font-size: 16px; }
 
-    header.topo{ padding: 16px 16px; }
-    header.topo h1{ font-size: 22px; }
-    header.topo p{ font-size: 14px; }
+    .topo-linha{ gap: 8px; }
+    .marca-texto{ font-size: 17px; }
+    .marca-icone{ width: 36px; height: 36px; font-size: 17px; }
+    .btn-icone-topo{ width: 38px; height: 38px; font-size: 17px; }
 
     main{ padding: 16px 12px; }
 
@@ -283,9 +377,8 @@
     .nav-mes button{ width: 40px; height: 40px; font-size: 18px; flex: 0 0 auto; }
     .btn-hoje{ flex: 1 1 100%; order: 3; }
 
-    .acoes-principais{ flex-direction: column; }
-    .btn-acao-principal{ flex: 1 1 auto; padding: 14px; font-size: 16px; }
-
+    .cartao-resumo.cartao-saldo{ padding: 20px; }
+    .cartao-resumo.cartao-saldo .valor{ font-size: 26px; }
     .cartao-resumo{ padding: 14px 10px; }
     .cartao-resumo .rotulo{ font-size: 12px; }
     .cartao-resumo .valor{ font-size: 18px; }
@@ -308,10 +401,13 @@
     .modal-largo{ max-width: 100%; }
 
     .rel-resumo{ flex-direction: column; }
+
+    .fab{ width: 56px; height: 56px; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); }
+    .fab-icone{ font-size: 28px; }
   }
 
   .btn-principal{
-    background: var(--teal);
+    background: var(--primaria);
     color: #fff;
     border: none;
     padding: 14px 22px;
@@ -321,7 +417,7 @@
     cursor: pointer;
     width: 100%;
   }
-  .btn-principal:hover{ background: var(--teal-dark); }
+  .btn-principal:hover{ background: var(--primaria-escura); }
 
   .ajuda{
     font-size: 14px;
@@ -369,7 +465,7 @@
     box-shadow: var(--shadow);
   }
   .busca-input-wrap input:focus{
-    outline: 3px solid var(--teal);
+    outline: 3px solid var(--primaria);
     outline-offset: 1px;
   }
   .btn-limpar-busca{
@@ -399,15 +495,15 @@
     white-space: nowrap;
   }
   .chip-toggle.ativo{
-    border-color: var(--teal);
-    background: var(--teal-soft);
-    color: var(--teal-dark);
+    border-color: var(--primaria);
+    background: var(--primaria-suave);
+    color: var(--primaria-escura);
   }
   .aviso-busca-global{
     text-align:center;
     font-size: 14px;
     color: var(--navy-soft);
-    background: var(--teal-soft);
+    background: var(--primaria-suave);
     border: 1px solid var(--border);
     border-radius: 10px;
     padding: 10px 14px;
@@ -433,7 +529,7 @@
   .conta-info{ flex: 1 1 260px; }
   .conta-desc{ font-size: 18px; font-weight: 600; }
   .conta-sub{ font-size: 14px; color: var(--navy-soft); margin-top: 2px; }
-  .conta-valor{ font-size: 20px; font-weight: bold; min-width: 130px; text-align:right; }
+  .conta-valor{ font-size: 19px; font-weight: 700; font-family: "Sora", sans-serif; font-variant-numeric: tabular-nums; min-width: 130px; text-align:right; }
 
   .conta-acoes{
     display:flex;
@@ -442,10 +538,10 @@
   }
   .btn-status{
     padding: 10px 16px;
-    border-radius: 8px;
+    border-radius: 999px;
     border: none;
-    font-size: 15px;
-    font-weight: bold;
+    font-size: 14px;
+    font-weight: 700;
     cursor:pointer;
   }
   .btn-status.pago{ background: var(--teal-soft); color: var(--teal-dark); }
@@ -546,7 +642,7 @@
     font-size: 16px;
     color: var(--navy);
   }
-  .opcao-relatorio:hover{ border-color: var(--teal); background: var(--teal-soft); }
+  .opcao-relatorio:hover{ border-color: var(--primaria); background: var(--primaria-suave); }
   .opcao-relatorio b{ display:block; font-size: 17px; margin-bottom: 3px; }
   .opcao-relatorio span{ font-size: 14px; color: var(--navy-soft); }
 
@@ -557,13 +653,40 @@
     margin-top: 30px;
   }
 
+  /* --- Botao flutuante de adicionar conta (FAB) --- */
+  .fab{
+    position: fixed;
+    right: 22px;
+    bottom: calc(22px + env(safe-area-inset-bottom, 0px));
+    width: 62px;
+    height: 62px;
+    border-radius: 50%;
+    border: none;
+    background: var(--gradiente-marca);
+    color: #fff;
+    box-shadow: 0 8px 22px rgba(124,58,237,0.4);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor: pointer;
+    z-index: 40;
+  }
+  .fab:hover{ filter: brightness(1.08); }
+  .fab:active{ transform: scale(0.94); }
+  .fab-icone{
+    font-size: 32px;
+    font-weight: 400;
+    line-height: 1;
+    margin-top: -2px;
+  }
+
   /* --- Area de impressao (relatorio em PDF) --- */
   #areaImpressao{ display:none; }
 
   @media print{
     header.topo, .nav-mes, .acoes-principais, .resumo, .progresso-wrap,
     .cartao, .lista-header, .busca-wrap, .aviso-busca-global, #listaContas,
-    .rodape-nota, .fundo-modal, .aviso{
+    .rodape-nota, .fundo-modal, .aviso, .fab{
       display:none !important;
     }
     #areaImpressao{
@@ -633,16 +756,24 @@
     display: none;
   }
   .aviso.mostrar{ display:block; }
-  .aviso.info{ background:#FBE9D9; color:#7A4408; border:1px solid #E7B683; }
-  .aviso.erro{ background:#FBEAEA; color:#8A2222; border:1px solid #E1A0A0; }
-  .aviso.sucesso{ background:#DCEFE9; color:#175B4E; border:1px solid #9FCFC0; }
+  .aviso.info{ background: var(--amber-soft); color: var(--amber); border:1px solid var(--amber); }
+  .aviso.erro{ background: var(--red-soft); color: var(--red); border:1px solid var(--red); }
+  .aviso.sucesso{ background: var(--teal-soft); color: var(--teal-dark); border:1px solid var(--teal); }
 </style>
 </head>
 <body>
 
 <header class="topo">
-  <h1>Controle de Gastos Mensais</h1>
-  <p>Organize suas contas mes a mes, marque o que ja foi pago e acompanhe parcelamentos.</p>
+  <div class="topo-linha">
+    <div class="marca">
+      <span class="marca-icone">💜</span>
+      <span class="marca-texto">Meus Gastos</span>
+    </div>
+    <div class="topo-acoes">
+      <button id="btnAbrirRelatorio" class="btn-icone-topo" title="Baixar relatorio em PDF">📄</button>
+      <button id="btnTema" class="btn-icone-topo" title="Alternar tema claro/escuro">🌙</button>
+    </div>
+  </div>
 </header>
 
 <div class="aviso" id="avisoStatus"></div>
@@ -656,23 +787,20 @@
     <button class="btn-hoje" id="btnHoje">Ir para hoje</button>
   </div>
 
-  <div class="acoes-principais">
-    <button class="btn-acao-principal adicionar" id="btnAbrirAdicionar">+ Adicionar conta</button>
-    <button class="btn-acao-principal relatorio" id="btnAbrirRelatorio">Baixar relatorio em PDF</button>
-  </div>
-
   <div class="resumo">
-    <div class="cartao-resumo previsto">
-      <div class="rotulo">Total previsto</div>
+    <div class="cartao-resumo previsto cartao-saldo">
+      <div class="rotulo">Total previsto do mes</div>
       <div class="valor" id="totalPrevisto">R$ 0,00</div>
     </div>
-    <div class="cartao-resumo pago">
-      <div class="rotulo">Ja pago</div>
-      <div class="valor" id="totalPago">R$ 0,00</div>
-    </div>
-    <div class="cartao-resumo pendente">
-      <div class="rotulo">Ainda falta pagar</div>
-      <div class="valor" id="totalPendente">R$ 0,00</div>
+    <div class="resumo-linha">
+      <div class="cartao-resumo pago">
+        <div class="rotulo">Ja pago</div>
+        <div class="valor" id="totalPago">R$ 0,00</div>
+      </div>
+      <div class="cartao-resumo pendente">
+        <div class="rotulo">Falta pagar</div>
+        <div class="valor" id="totalPendente">R$ 0,00</div>
+      </div>
     </div>
   </div>
 
@@ -810,6 +938,10 @@
 
 <p class="rodape-nota" id="rodapeNota">Os dados ficam salvos neste computador, neste navegador. Use sempre o mesmo navegador para acessar suas contas.</p>
 
+<button id="btnAbrirAdicionar" class="fab" title="Adicionar conta" aria-label="Adicionar conta">
+  <span class="fab-icone">+</span>
+</button>
+
 <!-- Biblioteca do Supabase (necessaria apenas se voce configurar SUPABASE_URL / SUPABASE_ANON_KEY abaixo) -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -821,8 +953,8 @@
   // Enquanto nao configurar, o site funciona normalmente salvando os dados
   // so neste navegador (modo local), como antes.
   // ======================================================================
-  var SUPABASE_URL = "https://xtfzusdvbfjoezbkstkq.supabase.co";
-  var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh0Znp1c2R2YmZqb2V6YmtzdGtxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM0NjgxMzQsImV4cCI6MjA5OTA0NDEzNH0.x0DFqbKWclrTVDF4jKQwJ4XkYHXTSmgLhMU9vZJohXo";
+  var SUPABASE_URL = "COLE_AQUI_A_URL_DO_SEU_PROJETO_SUPABASE";
+  var SUPABASE_ANON_KEY = "COLE_AQUI_A_CHAVE_ANON_PUBLIC";
 
   var supabaseConfigurado = SUPABASE_URL.indexOf("COLE_AQUI") === -1 && SUPABASE_ANON_KEY.indexOf("COLE_AQUI") === -1;
   var supabaseClient = null;
@@ -847,6 +979,43 @@
       "Seus dados ficam salvos no seu banco de dados na nuvem (Supabase). Voce pode acessar de qualquer computador por este mesmo link.";
   } else {
     mostrarAviso("Este site ainda esta salvando os dados so neste navegador. Para acessar suas contas de qualquer computador, configure o Supabase (veja o arquivo COMO-CONFIGURAR.md).", "info");
+  }
+
+  // ---- Tema claro / escuro (respeita o sistema, mas pode ser trocado manualmente) ----
+  var CHAVE_TEMA = "controleGastos_tema";
+  var btnTema = document.getElementById("btnTema");
+
+  function atualizarIconeTema(tema){
+    // O icone mostrado representa a acao do clique (para onde ele vai mudar)
+    btnTema.textContent = tema === "escuro" ? "☀️" : "🌙";
+    btnTema.title = tema === "escuro" ? "Mudar para o tema claro" : "Mudar para o tema escuro";
+  }
+
+  function aplicarTema(tema){
+    document.documentElement.setAttribute("data-tema", tema);
+    atualizarIconeTema(tema);
+  }
+
+  // O <head> ja aplicou um tema inicial (para nao piscar); aqui so sincronizamos o icone
+  var temaAtual = document.documentElement.getAttribute("data-tema") || "claro";
+  atualizarIconeTema(temaAtual);
+
+  btnTema.addEventListener("click", function(){
+    temaAtual = temaAtual === "escuro" ? "claro" : "escuro";
+    try{ localStorage.setItem(CHAVE_TEMA, temaAtual); } catch(e){}
+    aplicarTema(temaAtual);
+  });
+
+  // Se a pessoa nunca escolheu manualmente, acompanha o tema do sistema operacional
+  if(window.matchMedia){
+    window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", function(evento){
+      var escolhaManual = null;
+      try{ escolhaManual = localStorage.getItem(CHAVE_TEMA); } catch(e){}
+      if(escolhaManual !== "claro" && escolhaManual !== "escuro"){
+        temaAtual = evento.matches ? "escuro" : "claro";
+        aplicarTema(temaAtual);
+      }
+    });
   }
 
   var hoje = new Date();
