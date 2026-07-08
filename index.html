@@ -268,6 +268,48 @@
     .resumo{ grid-template-columns: 1fr; }
   }
 
+  /* --- Ajustes gerais para celular --- */
+  @media (max-width: 600px){
+    body{ font-size: 16px; }
+
+    header.topo{ padding: 16px 16px; }
+    header.topo h1{ font-size: 22px; }
+    header.topo p{ font-size: 14px; }
+
+    main{ padding: 16px 12px; }
+
+    .nav-mes{ padding: 10px 12px; gap: 10px; }
+    .nav-mes .titulo-mes{ font-size: 19px; min-width: 0; flex: 1 1 auto; }
+    .nav-mes button{ width: 40px; height: 40px; font-size: 18px; flex: 0 0 auto; }
+    .btn-hoje{ flex: 1 1 100%; order: 3; }
+
+    .acoes-principais{ flex-direction: column; }
+    .btn-acao-principal{ flex: 1 1 auto; padding: 14px; font-size: 16px; }
+
+    .cartao-resumo{ padding: 14px 10px; }
+    .cartao-resumo .rotulo{ font-size: 12px; }
+    .cartao-resumo .valor{ font-size: 18px; }
+
+    .cartao{ padding: 16px 14px; }
+    .tipos-conta{ flex-direction: column; }
+    .tipo-btn{ flex: 1 1 auto; }
+
+    .busca-wrap{ flex-direction: column; }
+    .chip-toggle{ width: 100%; }
+
+    .conta-item{ padding: 14px; gap: 8px; }
+    .conta-desc{ font-size: 16px; }
+    .conta-valor{ min-width: 0; flex: 1 1 auto; text-align: left; font-size: 18px; }
+    .conta-info{ flex: 1 1 100%; }
+    .conta-acoes{ flex: 1 1 100%; justify-content: flex-start; }
+    .btn-status{ flex: 1 1 auto; }
+
+    .modal{ padding: 18px 16px; max-height: 85vh; }
+    .modal-largo{ max-width: 100%; }
+
+    .rel-resumo{ flex-direction: column; }
+  }
+
   .btn-principal{
     background: var(--teal);
     color: #fff;
@@ -295,6 +337,83 @@
     align-items: center;
     margin-bottom: 10px;
   }
+
+  /* --- Barra de busca --- */
+  .busca-wrap{
+    display:flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .busca-input-wrap{
+    position: relative;
+    flex: 1 1 260px;
+    display:flex;
+    align-items:center;
+  }
+  .busca-icone{
+    position:absolute;
+    left: 14px;
+    font-size: 17px;
+    pointer-events:none;
+    opacity: 0.6;
+  }
+  .busca-input-wrap input{
+    width:100%;
+    padding: 13px 44px 13px 42px;
+    font-size: 17px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--navy);
+    box-shadow: var(--shadow);
+  }
+  .busca-input-wrap input:focus{
+    outline: 3px solid var(--teal);
+    outline-offset: 1px;
+  }
+  .btn-limpar-busca{
+    position:absolute;
+    right: 8px;
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    border: none;
+    background: #ECEFEE;
+    color: var(--navy-soft);
+    font-size: 16px;
+    cursor:pointer;
+  }
+  .btn-limpar-busca:hover{ background: #DEE3E2; }
+  .chip-toggle{
+    flex: 0 0 auto;
+    padding: 13px 16px;
+    border-radius: 10px;
+    border: 2px solid var(--border);
+    background: var(--card);
+    color: var(--navy-soft);
+    font-size: 15px;
+    font-weight: 600;
+    cursor:pointer;
+    box-shadow: var(--shadow);
+    white-space: nowrap;
+  }
+  .chip-toggle.ativo{
+    border-color: var(--teal);
+    background: var(--teal-soft);
+    color: var(--teal-dark);
+  }
+  .aviso-busca-global{
+    text-align:center;
+    font-size: 14px;
+    color: var(--navy-soft);
+    background: var(--teal-soft);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 14px;
+    margin-bottom: 14px;
+  }
+
   .conta-item{
     background: var(--card);
     border: 1px solid var(--border);
@@ -443,7 +562,8 @@
 
   @media print{
     header.topo, .nav-mes, .acoes-principais, .resumo, .progresso-wrap,
-    .cartao, .lista-header, #listaContas, .rodape-nota, .fundo-modal{
+    .cartao, .lista-header, .busca-wrap, .aviso-busca-global, #listaContas,
+    .rodape-nota, .fundo-modal, .aviso{
       display:none !important;
     }
     #areaImpressao{
@@ -567,6 +687,18 @@
   <div class="lista-header">
     <h2 id="tituloLista">Contas de Agosto</h2>
   </div>
+
+  <div class="busca-wrap">
+    <div class="busca-input-wrap">
+      <span class="busca-icone">&#128269;</span>
+      <input type="text" id="campoBusca" placeholder="Buscar por descricao...">
+      <button id="btnLimparBusca" class="btn-limpar-busca" title="Limpar busca" style="display:none;">&#10005;</button>
+    </div>
+    <button id="btnBuscarTodosMeses" class="chip-toggle" title="Buscar em todos os meses e anos">Buscar em todos os meses</button>
+  </div>
+
+  <div class="aviso-busca-global" id="avisoBuscaGlobal" style="display:none;">Mostrando resultados de todos os meses e anos cadastrados.</div>
+
   <div id="listaContas"></div>
 
 </main>
@@ -723,8 +855,18 @@
     ano: hoje.getFullYear(),
     tipoAtivo: "unica",
     contas: [],
-    editandoId: null
+    editandoId: null,
+    termoBusca: "",
+    buscaGlobal: false
   };
+
+  function normalizarTexto(texto){
+    return (texto || "")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .trim();
+  }
 
   // ---- Camada de dados: usa Supabase se configurado, senao localStorage ----
 
@@ -1024,20 +1166,14 @@
     fundoAdicionar.classList.remove("aberto");
   });
 
-  // --- renderizar lista do mes atual ---
+  // --- renderizar lista do mes atual (ou resultado da busca) ---
   function renderizarLista(){
     var container = document.getElementById("listaContas");
     container.innerHTML = "";
 
+    // Contas do mes/ano em exibicao (usadas sempre para os cartoes de resumo)
     var contasDoMes = estado.contas.filter(function(c){
       return c.mes === estado.mes && c.ano === estado.ano;
-    });
-
-    contasDoMes.sort(function(a, b){
-      var diaA = a.dia || 99;
-      var diaB = b.dia || 99;
-      if(diaA !== diaB) return diaA - diaB;
-      return a.descricao.localeCompare(b.descricao);
     });
 
     var totalPrevisto = 0, totalPago = 0, totalPendente = 0;
@@ -1054,17 +1190,59 @@
     document.getElementById("barraPreenchida").style.width = percentual + "%";
     document.getElementById("progressoPercentual").textContent = percentual + "%";
 
-    if(contasDoMes.length === 0){
-      container.innerHTML = '<div class="vazio">Nenhuma conta cadastrada para este mes ainda.<br>Use o botao "+ Adicionar conta" acima para adicionar a primeira.</div>';
+    // Mostra ou esconde os cartoes de resumo dependendo do modo de busca
+    var mostrarResumo = !estado.buscaGlobal;
+    document.querySelector(".resumo").style.display = mostrarResumo ? "grid" : "none";
+    document.querySelector(".progresso-wrap").style.display = mostrarResumo ? "block" : "none";
+    document.getElementById("avisoBuscaGlobal").style.display = estado.buscaGlobal ? "block" : "none";
+
+    // Define a lista base: so o mes atual, ou todas as contas (busca global)
+    var listaBase = estado.buscaGlobal ? estado.contas.slice() : contasDoMes.slice();
+
+    // Aplica o filtro de texto da busca, se houver
+    var termo = normalizarTexto(estado.termoBusca);
+    var listaFiltrada = termo
+      ? listaBase.filter(function(c){ return normalizarTexto(c.descricao).indexOf(termo) !== -1; })
+      : listaBase;
+
+    listaFiltrada.sort(function(a, b){
+      if(estado.buscaGlobal){
+        if(a.ano !== b.ano) return a.ano - b.ano;
+        if(a.mes !== b.mes) return a.mes - b.mes;
+      }
+      var diaA = a.dia || 99;
+      var diaB = b.dia || 99;
+      if(diaA !== diaB) return diaA - diaB;
+      return a.descricao.localeCompare(b.descricao);
+    });
+
+    // Titulo da secao
+    var tituloLista = document.getElementById("tituloLista");
+    if(estado.buscaGlobal){
+      tituloLista.textContent = termo
+        ? listaFiltrada.length + " resultado(s) para \"" + estado.termoBusca + "\""
+        : "Todas as contas cadastradas";
+    } else {
+      tituloLista.textContent = "Contas de " + NOMES_MES[estado.mes] +
+        (termo ? " · " + listaFiltrada.length + " resultado(s) para \"" + estado.termoBusca + "\"" : "");
+    }
+
+    if(listaFiltrada.length === 0){
+      if(termo){
+        container.innerHTML = '<div class="vazio">Nenhuma conta encontrada para "' + escaparHtml(estado.termoBusca) + '".</div>';
+      } else {
+        container.innerHTML = '<div class="vazio">Nenhuma conta cadastrada para este mes ainda.<br>Use o botao "+ Adicionar conta" acima para adicionar a primeira.</div>';
+      }
       return;
     }
 
-    contasDoMes.forEach(function(c){
+    listaFiltrada.forEach(function(c){
       var item = document.createElement("div");
       item.className = "conta-item " + c.status;
 
       var subtexto = "";
-      if(c.dia) subtexto += "Vencimento: dia " + c.dia;
+      if(estado.buscaGlobal) subtexto += NOMES_MES[c.mes] + "/" + c.ano;
+      if(c.dia) subtexto += (subtexto ? " · " : "") + "Vencimento: dia " + c.dia;
       if(c.parcelaInfo) subtexto += (subtexto ? " · " : "") + "Parcela " + c.parcelaInfo;
 
       item.innerHTML =
@@ -1084,6 +1262,31 @@
       container.appendChild(item);
     });
   }
+
+  // --- busca ---
+  var campoBusca = document.getElementById("campoBusca");
+  var btnLimparBusca = document.getElementById("btnLimparBusca");
+  var btnBuscarTodosMeses = document.getElementById("btnBuscarTodosMeses");
+
+  campoBusca.addEventListener("input", function(){
+    estado.termoBusca = campoBusca.value;
+    btnLimparBusca.style.display = estado.termoBusca ? "block" : "none";
+    renderizarLista();
+  });
+
+  btnLimparBusca.addEventListener("click", function(){
+    campoBusca.value = "";
+    estado.termoBusca = "";
+    btnLimparBusca.style.display = "none";
+    renderizarLista();
+    campoBusca.focus();
+  });
+
+  btnBuscarTodosMeses.addEventListener("click", function(){
+    estado.buscaGlobal = !estado.buscaGlobal;
+    btnBuscarTodosMeses.classList.toggle("ativo", estado.buscaGlobal);
+    renderizarLista();
+  });
 
   document.getElementById("listaContas").addEventListener("click", async function(evento){
     var alvo = evento.target;
