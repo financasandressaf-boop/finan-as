@@ -315,7 +315,7 @@
     color: var(--navy);
   }
 
-  /* Linhas de Transações */
+  /* Linhas de Transações Reestruturadas para Otimizar Espaço */
   .conta-item{
     background: var(--card);
     border: 1px solid var(--border);
@@ -326,15 +326,17 @@
     align-items:center;
     justify-content: space-between;
     box-shadow: var(--shadow-out);
+    gap: 12px;
   }
-  .conta-info{ display: flex; flex-direction: column; }
-  .conta-desc{ font-size: 16px; font-weight: 600; color: var(--navy); }
-  .conta-sub{ font-size: 12px; color: var(--navy-soft); margin-top: 4px; }
+  .conta-info{ display: flex; flex-direction: column; flex: 1; min-width: 0; }
+  .conta-desc{ font-size: 16px; font-weight: 600; color: var(--navy); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .conta-sub{ font-size: 12px; color: var(--navy-soft); margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   
-  .conta-valor-wrapper { text-align: right; margin-right: 12px; }
-  .conta-valor{ font-size: 16px; font-weight: 700; font-family: "Sora", sans-serif; }
+  .conta-direita-wrapper { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+  .conta-valor-wrapper { text-align: right; }
+  .conta-valor{ font-size: 16px; font-weight: 700; font-family: "Sora", sans-serif; white-space: nowrap; }
 
-  .conta-acoes{ display:flex; gap: 8px; align-items:center; }
+  .conta-acoes{ display:flex; gap: 8px; align-items:center; position: relative; }
   
   .btn-status{
     padding: 6px 12px;
@@ -343,24 +345,40 @@
     font-size: 11px;
     font-weight: 700;
     cursor:pointer;
+    white-space: nowrap;
   }
   .btn-status.pago { background: var(--teal-soft); color: var(--teal-dark); }
   .btn-status.pendente { background: var(--amber-soft); color: var(--amber); }
 
-  .btn-icone{
+  /* Botão Três Pontinhos com Select Invisível Sobreposto */
+  .btn-menu-contextual {
     width: 34px;
     height: 34px;
     border-radius: 50%;
     border: 1px solid var(--border);
     background: var(--bg);
     box-shadow: var(--shadow-out);
-    font-size: 14px;
-    cursor:pointer;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
+    color: var(--navy);
   }
-  .btn-icone:active{ box-shadow: var(--shadow-btn-active); }
+  .btn-menu-contextual:active { box-shadow: var(--shadow-btn-active); }
+  
+  .select-acoes-nativo {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    -webkit-appearance: none;
+  }
 
   /* Modais */
   .fundo-modal{
@@ -402,7 +420,6 @@
     outline: none;
   }
 
-  /* Garante cor correta para os placeholders em ambos os temas */
   .campo input::placeholder {
     color: var(--navy-soft);
     opacity: 0.7;
@@ -473,7 +490,6 @@
   .vazio { text-align: center; padding: 40px; color: var(--navy-soft); font-size: 14px; }
   .rodape-nota { text-align: center; color: var(--navy-soft); font-size: 12px; margin-top: 30px; padding: 0 20px; }
 
-  /* --- Elementos Exclusivos da Impressão / PDF --- */
   #areaImpressao { display: none; }
 
   @media print {
@@ -695,7 +711,6 @@
 
   var estadoExclusao = { conta: null };
 
-  // ---- Mapeadores Supabase <-> Local ----
   function linhaBdParaLocal(r){
     return { id: r.id, descricao: r.descricao, valor: Number(r.valor), dia: r.dia, mes: r.mes, ano: r.ano, status: r.status, grupo: r.grupo, parcelaInfo: r.parcela_info };
   }
@@ -784,7 +799,6 @@
     estado.mes = hoje.getMonth(); estado.ano = hoje.getFullYear(); atualizarTituloMes(); renderizarLista();
   });
 
-  // --- Modais Controles ---
   var fundoAdicionar = document.getElementById("fundoModalAdicionar");
   document.getElementById("btnAbrirAdicionar").addEventListener("click", function(){ preencherSelectsFormulario(); fundoAdicionar.classList.add("aberto"); });
   document.getElementById("btnFecharAdicionar").addEventListener("click", function(){ fundoAdicionar.classList.remove("aberto"); });
@@ -859,26 +873,61 @@
       var sub = (c.dia ? "Dia " + c.dia : "Sem vencimento") + (c.parcelaInfo ? " • Parcela " + c.parcelaInfo : "");
       if(estado.buscaGlobal) sub = NOMES_MES[c.mes] + "/" + c.ano + " • " + sub;
 
+      /* AJUSTE AQUI: Layout Otimizado com Menu Nativo Invisível sobreposto aos Três Pontinhos */
       item.innerHTML = `
         <div class="conta-info">
           <div class="conta-desc">${c.descricao}</div>
           <div class="conta-sub">${sub}</div>
         </div>
-        <div style="display:flex; align-items:center;">
+        <div class="conta-direita-wrapper">
           <div class="conta-valor-wrapper">
             <div class="conta-valor" style="${c.status === 'pago' ? 'text-decoration:line-through; opacity:0.5;' : ''}">${formatarMoeda(c.valor)}</div>
           </div>
           <div class="conta-acoes">
             <button class="btn-status ${c.status}" data-id="${c.id}" data-acao="status">${c.status === 'pago' ? 'Pago ✓' : 'Pendente'}</button>
-            <button class="btn-icone" data-id="${c.id}" data-acao="editar">✏️</button>
-            <button class="btn-icone" data-id="${c.id}" data-acao="excluir">✕</button>
+            <div class="btn-menu-contextual">
+              ⋮
+              <select class="select-acoes-nativo" data-id="${c.id}">
+                <option value="" disabled selected></option>
+                <option value="editar">✏️ Editar</option>
+                <option value="excluir">✕ Excluir</option>
+              </select>
+            </div>
           </div>
         </div>`;
       container.appendChild(item);
     });
+
+    // Vincula o evento change para tratar a ação escolhida no menu nativo do celular
+    container.querySelectorAll(".select-acoes-nativo").forEach(function(sel){
+      sel.addEventListener("change", function(e){
+        var id = this.getAttribute("data-id");
+        var acao = this.value;
+        if(!acao) return;
+        
+        var conta = estado.contas.find(function(c){ return c.id == id; });
+        if(!conta) return;
+
+        if(acao === "editar"){
+          estado.editandoId = id;
+          document.getElementById("editDescricao").value = conta.descricao;
+          document.getElementById("editValor").value = conta.valor;
+          document.getElementById("editDia").value = conta.dia || "";
+          document.getElementById("fundoModal").classList.add("aberto");
+        } else if(acao === "excluir"){
+          estadoExclusao.conta = conta;
+          document.getElementById("excluirDescricao").textContent = conta.descricao;
+          document.getElementById("excluirValor").textContent = formatarMoeda(conta.valor);
+          document.getElementById("excluirAvisoGrupo").style.display = conta.grupo ? "block" : "none";
+          document.getElementById("fundoModalExcluir").classList.add("aberto");
+        }
+        
+        // Reseta o select para permitir re-seleção futura
+        this.value = "";
+      });
+    });
   }
 
-  // --- Lógica de Montagem e Geração dos Relatórios ---
   function montarLinhasTabela(contas){
     var html = "";
     contas.forEach(function(c){
@@ -959,27 +1008,15 @@
     dispararImpressao();
   });
 
-  // --- Ações na Lista (Status / Editar / Excluir) ---
+  // Vinculação exclusiva para a alternação de status do clique direto no badge
   document.getElementById("listaContas").addEventListener("click", async function(e){
-    var id = e.target.getAttribute("data-id"); var acao = e.target.getAttribute("data-acao");
-    if(!id) return;
-    var conta = estado.contas.find(function(c){ return c.id == id; });
-
-    if(acao === "status"){
+    var id = e.target.getAttribute("data-id");
+    var acao = e.target.getAttribute("data-acao");
+    if(acao === "status" && id) {
+      var conta = estado.contas.find(function(c){ return c.id == id; });
+      if(!conta) return;
       conta.status = conta.status === "pago" ? "pendente" : "pago"; renderizarLista();
       await atualizarContaBd(id, { status: conta.status });
-    } else if(acao === "editar"){
-      estado.editandoId = id;
-      document.getElementById("editDescricao").value = conta.descricao;
-      document.getElementById("editValor").value = conta.valor;
-      document.getElementById("editDia").value = conta.dia || "";
-      document.getElementById("fundoModal").classList.add("aberto");
-    } else if(acao === "excluir"){
-      estadoExclusao.conta = conta;
-      document.getElementById("excluirDescricao").textContent = conta.descricao;
-      document.getElementById("excluirValor").textContent = formatarMoeda(conta.valor);
-      document.getElementById("excluirAvisoGrupo").style.display = conta.grupo ? "block" : "none";
-      document.getElementById("fundoModalExcluir").classList.add("aberto");
     }
   });
 
