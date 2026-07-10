@@ -402,9 +402,15 @@
     outline: none;
   }
 
+  /* Garante cor correta para os placeholders em ambos os temas */
+  .campo input::placeholder {
+    color: var(--navy-soft);
+    opacity: 0.7;
+  }
+
   .btn-principal{
     background: var(--navy);
-    color: #fff;
+    color: var(--bg);
     border: none;
     padding: 16px;
     font-size: 16px;
@@ -422,12 +428,29 @@
     border-radius: 12px;
     border: 1px solid var(--border);
     background: var(--bg);
+    color: var(--navy);
     font-size: 12px;
     font-weight: 600;
     box-shadow: var(--shadow-out);
     cursor: pointer;
   }
   .tipo-btn.ativo { box-shadow: var(--shadow-in); color: var(--teal-dark); }
+
+  .opcao-relatorio {
+    padding: 16px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    text-align: left;
+    background: var(--card);
+    box-shadow: var(--shadow-out);
+    cursor: pointer;
+    color: var(--navy);
+    margin-bottom: 12px;
+    width: 100%;
+  }
+  .opcao-relatorio:active { box-shadow: var(--shadow-in); }
+  .opcao-relatorio b { display: block; font-size: 16px; margin-bottom: 4px; }
+  .opcao-relatorio span { font-size: 13px; color: var(--navy-soft); }
 
   .fab{
     position: fixed;
@@ -449,6 +472,22 @@
   .fab-icone{ font-size: 28px; font-weight: 300; }
   .vazio { text-align: center; padding: 40px; color: var(--navy-soft); font-size: 14px; }
   .rodape-nota { text-align: center; color: var(--navy-soft); font-size: 12px; margin-top: 30px; padding: 0 20px; }
+
+  /* --- Elementos Exclusivos da Impressão / PDF --- */
+  #areaImpressao { display: none; }
+
+  @media print {
+    header.topo, .nav-mes, .resumo, .lista-header, .busca-wrap, .aviso-busca-global, #listaContas, .rodape-nota, .fundo-modal, .aviso, .fab {
+      display: none !important;
+    }
+    #areaImpressao { display: block !important; color: #000; background: #fff; padding: 20px; }
+    table.rel-tabela { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    table.rel-tabela th, table.rel-tabela td { border: 1px solid #ccc; padding: 10px; text-align: left; font-size: 14px; }
+    table.rel-tabela th { background: #f2f2f2; font-weight: bold; }
+    .rel-cabecalho { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #000; padding-bottom: 10px; }
+    .rel-resumo { display: flex; justify-content: space-between; margin-bottom: 20px; padding: 15px; border: 1px solid #ccc; border-radius: 8px; }
+    .rel-mes-titulo { font-size: 18px; font-weight: bold; margin: 25px 0 10px 0; border-left: 4px solid #000; padding-left: 8px; }
+  }
 </style>
 </head>
 <body>
@@ -532,7 +571,7 @@
 <div class="fundo-modal" id="fundoModalAdicionar">
   <div class="modal">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-      <h3>Nova Lançamento</h3>
+      <h3>Novo Lançamento</h3>
       <button id="btnFecharAdicionar" style="background:none; border:none; font-size:20px; color:var(--navy-soft); cursor:pointer;">&#10005;</button>
     </div>
     <form id="formConta">
@@ -591,6 +630,27 @@
   </div>
 </div>
 
+<div class="fundo-modal" id="fundoModalRelatorio">
+  <div class="modal">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+      <h3>Baixar relatório em PDF</h3>
+      <button id="btnFecharRelatorio" style="background:none; border:none; font-size:20px; color:var(--navy-soft); cursor:pointer;">&#10005;</button>
+    </div>
+    <div>
+      <button class="opcao-relatorio" id="btnRelatorioMes">
+        <b id="rotuloRelatorioMes">Relatório do mês atual</b>
+        <span>Somente as contas do mês que está sendo visualizado</span>
+      </button>
+      <button class="opcao-relatorio" id="btnRelatorioAno">
+        <b>Relatório do ano todo</b>
+        <span>Todas as contas cadastradas no ano, organizadas mês a mês</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div id="areaImpressao"></div>
+
 <button id="btnAbrirAdicionar" class="fab" title="Adicionar conta"><span class="fab-icone">+</span></button>
 
 <p class="rodape-nota" id="rodapeNota">Carregando configurações de armazenamento...</p>
@@ -599,7 +659,7 @@
 <script>
 (function(){
   // ======================================================================
-  // CONFIGURAÇÃO DO SUPABASE (SUA INTEGRAÇÃO ORIGINAL)
+  // CONFIGURAÇÃO DO SUPABASE
   // ======================================================================
   var SUPABASE_URL = "https://xtfzusdvbfjoezbkstkq.supabase.co"; 
   var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh0Znp1c2R2YmZqb2V6YmtzdGtxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM0NjgxMzQsImV4cCI6MjA5OTA0NDEzNH0.x0DFqbKWclrTVDF4jKQwJ4XkYHXTSmgLhMU9vZJohXo"; 
@@ -709,6 +769,7 @@
 
   function atualizarTituloMes(){
     document.getElementById("tituloMes").textContent = NOMES_MES[estado.mes] + " de " + estado.ano;
+    document.getElementById("rotuloRelatorioMes").textContent = "Relatório de " + NOMES_MES[estado.mes] + " de " + estado.ano;
   }
 
   function mudarMes(delta){
@@ -727,6 +788,10 @@
   var fundoAdicionar = document.getElementById("fundoModalAdicionar");
   document.getElementById("btnAbrirAdicionar").addEventListener("click", function(){ preencherSelectsFormulario(); fundoAdicionar.classList.add("aberto"); });
   document.getElementById("btnFecharAdicionar").addEventListener("click", function(){ fundoAdicionar.classList.remove("aberto"); });
+
+  var fundoRelatorio = document.getElementById("fundoModalRelatorio");
+  document.getElementById("btnAbrirRelatorio").addEventListener("click", function(){ fundoRelatorio.classList.add("aberto"); });
+  document.getElementById("btnFecharRelatorio").addEventListener("click", function(){ fundoRelatorio.classList.remove("aberto"); });
 
   var botoesTipo = document.querySelectorAll(".tipo-btn");
   botoesTipo.forEach(function(b){
@@ -812,6 +877,87 @@
       container.appendChild(item);
     });
   }
+
+  // --- Lógica de Montagem e Geração dos Relatórios ---
+  function montarLinhasTabela(contas){
+    var html = "";
+    contas.forEach(function(c){
+      var venc = c.dia ? ("Dia " + c.dia) : "-";
+      var parcela = c.parcelaInfo ? c.parcelaInfo : "-";
+      var statusTexto = c.status === "pago" ? "Pago" : "Pendente";
+      html += '<tr>' +
+        '<td>' + c.descricao + '</td>' +
+        '<td>' + venc + '</td>' +
+        '<td>' + parcela + '</td>' +
+        '<td>' + formatarMoeda(c.valor) + '</td>' +
+        '<td>' + statusTexto + '</td>' +
+        '</tr>';
+    });
+    return html;
+  }
+
+  function montarResumoHtml(contas){
+    var totalP = 0, totalPago = 0;
+    contas.forEach(function(c){ totalP += c.valor; if(c.status === "pago") totalPago += c.valor; });
+    return '<div class="rel-resumo">' +
+      '<div><b>Previsto:</b> ' + formatarMoeda(totalP) + '</div>' +
+      '<div><b>Pago:</b> ' + formatarMoeda(totalPago) + '</div>' +
+      '<div><b>Pendente:</b> ' + formatarMoeda(totalP - totalPago) + '</div>' +
+      '</div>';
+  }
+
+  function dispararImpressao(){
+    window.focus();
+    setTimeout(function(){ window.print(); }, 150);
+  }
+
+  document.getElementById("btnRelatorioMes").addEventListener("click", function(){
+    var contasDoMes = estado.contas.filter(function(c){
+      return c.mes === estado.mes && c.ano === estado.ano;
+    }).sort(function(a,b){ return (a.dia || 99) - (b.dia || 99); });
+
+    var area = document.getElementById("areaImpressao");
+    area.innerHTML =
+      '<div class="rel-cabecalho">' +
+        '<h2>Relatório de Gastos - ' + NOMES_MES[estado.mes] + ' de ' + estado.ano + '</h2>' +
+        '<p>Gerado em ' + new Date().toLocaleDateString("pt-BR") + '</p>' +
+      '</div>' +
+      montarResumoHtml(contasDoMes) +
+      (contasDoMes.length === 0
+        ? '<p>Nenhuma conta cadastrada neste mês.</p>'
+        : '<table class="rel-tabela"><thead><tr><th>Descrição</th><th>Vencimento</th><th>Parcela</th><th>Valor</th><th>Status</th></tr></thead><tbody>' +
+          montarLinhasTabela(contasDoMes) + '</tbody></table>');
+
+    fundoRelatorio.classList.remove("aberto");
+    dispararImpressao();
+  });
+
+  document.getElementById("btnRelatorioAno").addEventListener("click", function(){
+    var contasDoAno = estado.contas.filter(function(c){ return c.ano === estado.ano; });
+
+    var area = document.getElementById("areaImpressao");
+    var html = '<div class="rel-cabecalho">' +
+        '<h2>Relatório de Gastos - Ano de ' + estado.ano + '</h2>' +
+        '<p>Gerado em ' + new Date().toLocaleDateString("pt-BR") + '</p>' +
+      '</div>' +
+      montarResumoHtml(contasDoAno);
+
+    if(contasDoAno.length === 0){
+      html += '<p>Nenhuma conta cadastrada neste ano.</p>';
+    } else {
+      for(var m = 0; m < 12; m++){
+        var contasMes = contasDoAno.filter(function(c){ return c.mes === m; })
+          .sort(function(a,b){ return (a.dia || 99) - (b.dia || 99); });
+        if(contasMes.length === 0) continue;
+        html += '<div class="rel-mes-titulo">' + NOMES_MES[m] + '</div>';
+        html += '<table class="rel-tabela"><thead><tr><th>Descrição</th><th>Vencimento</th><th>Parcela</th><th>Valor</th><th>Status</th></tr></thead><tbody>' +
+          montarLinhasTabela(contasMes) + '</tbody></table>';
+      }
+    }
+    area.innerHTML = html;
+    fundoRelatorio.classList.remove("aberto");
+    dispararImpressao();
+  });
 
   // --- Ações na Lista (Status / Editar / Excluir) ---
   document.getElementById("listaContas").addEventListener("click", async function(e){
