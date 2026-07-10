@@ -6,10 +6,9 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#7C3AED">
+<meta name="theme-color" content="#EAF0F6">
 <title>Meus Gastos</title>
 <script>
-// Aplica o tema o mais cedo possivel, para a tela nao "piscar" com o tema errado
 (function(){
   try{
     var salvo = localStorage.getItem("controleGastos_tema");
@@ -25,89 +24,74 @@
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg: #F3F1F8;
-    --card: #FFFFFF;
-    --border: #E8E4F2;
-    --navy: #1A1523;
-    --navy-soft: #6B637A;
-    --teal: #12A570;
-    --teal-dark: #0C7F57;
-    --teal-soft: #DFF5EA;
-    --amber: #D9760B;
-    --amber-soft: #FCEBD9;
-    --red: #D2464C;
-    --red-soft: #FAE1E2;
-    --shadow: 0 4px 18px rgba(30,15,60,0.08);
-
-    --primaria: #7C3AED;
-    --primaria-escura: #5F27C9;
-    --primaria-clara: #9D6BF5;
-    --primaria-suave: #EFE6FD;
-    --gradiente-marca: linear-gradient(135deg, #8A3FFC 0%, #5F27C9 100%);
-
-    --tema-icone: "🌙";
+    /* Neumorphism Palette - Baseada nos prints */
+    --bg: #EAF0F6;
+    --card: #F3F7FA;
+    --border: rgba(255, 255, 255, 0.7);
+    --navy: #1C1E22;
+    --navy-soft: #7D8592;
+    --teal: #22C55E;
+    --teal-dark: #15803D;
+    --teal-soft: #DCFCE7;
+    --amber: #F59E0B;
+    --amber-soft: #FEF3C7;
+    --red: #EF4444;
+    --red-soft: #FEE2E2;
+    
+    /* Sombras Neumórficas */
+    --shadow-out: 6px 6px 16px #D1D9E6, -6px -6px 16px #FFFFFF;
+    --shadow-in: inset 4px 4px 8px #D1D9E6, inset -4px -4px 8px #FFFFFF;
+    --shadow-btn-active: inset 2px 2px 5px #D1D9E6, inset -2px -2px 5px #FFFFFF;
+    
+    /* Cartão de Destaque Escuro */
+    --card-dark: #1A1A1A;
+    --card-dark-text: #FFFFFF;
   }
 
   :root[data-tema="escuro"]{
-    --bg: #0E0C15;
-    --card: #1E1B29;
-    --border: #363047;
-    --navy: #ECE9F6;
-    --navy-soft: #B4AAC9;
-    --teal: #34D399;
-    --teal-dark: #23B583;
-    --teal-soft: #17352A;
-    --amber: #F7B155;
-    --amber-soft: #3D2C15;
-    --red: #F1787D;
-    --red-soft: #3D1F23;
-    --shadow: 0 6px 20px rgba(0,0,0,0.45);
-
-    --primaria: #A47BF0;
-    --primaria-escura: #8657E6;
-    --primaria-clara: #C7A8FB;
-    --primaria-suave: #2A2140;
-    --gradiente-marca: linear-gradient(135deg, #7C4FE0 0%, #55279C 100%);
+    --bg: #18191C;
+    --card: #1F2125;
+    --border: rgba(255, 255, 255, 0.05);
+    --navy: #F3F4F6;
+    --navy-soft: #9CA3AF;
+    --teal: #10B981;
+    --teal-dark: #059669;
+    --teal-soft: #064E3B;
+    --amber: #FBBF24;
+    --amber-soft: #78350F;
+    --red: #F87171;
+    --red-soft: #7F1D1D;
+    
+    --shadow-out: 6px 6px 14px #0F1012, -6px -6px 14px #23252A;
+    --shadow-in: inset 4px 4px 8px #0F1012, inset -4px -4px 8px #23252A;
+    --shadow-btn-active: inset 2px 2px 5px #0F1012, inset -2px -2px 5px #23252A;
+    
+    --card-dark: #0F1012;
+    --card-dark-text: #FFFFFF;
   }
 
-  * { box-sizing: border-box; }
-
-  .cartao, .conta-item, .modal, .nav-mes, .cartao-resumo, .aviso, .fundo-modal .modal,
-  .busca-input-wrap input, .campo input, .campo select, .tipo-btn, .chip-toggle, .opcao-relatorio{
-    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
-  }
-
-  html{
-    -webkit-text-size-adjust: 100%;
-    text-size-adjust: 100%;
-    touch-action: manipulation;
-  }
+  * { box-sizing: border-box; transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease; }
 
   body{
     margin:0;
     background: var(--bg);
-    font-family: "Inter", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-family: "Inter", sans-serif;
     color: var(--navy);
-    font-size: 17px;
-    line-height: 1.4;
-    padding-bottom: 110px;
-    touch-action: manipulation;
+    font-size: 16px;
+    padding-bottom: 120px;
     -webkit-tap-highlight-color: transparent;
-    transition: background-color 0.25s ease, color 0.25s ease;
   }
 
   h1, h2, h3 {
-    font-family: "Sora", "Segoe UI", sans-serif;
+    font-family: "Sora", sans-serif;
     color: var(--navy);
-    margin: 0 0 6px 0;
+    font-weight: 700;
   }
 
+  /* --- Topo --- */
   header.topo{
-    background: var(--gradiente-marca);
-    color: #fff;
-    padding: 18px 20px calc(18px + env(safe-area-inset-top, 0px)) 20px;
-    padding-top: max(18px, env(safe-area-inset-top, 0px));
-    box-shadow: var(--shadow);
+    background: var(--bg);
+    padding: 20px;
     position: sticky;
     top: 0;
     z-index: 30;
@@ -116,799 +100,355 @@
     display:flex;
     align-items:center;
     justify-content: space-between;
-    max-width: 980px;
+    max-width: 600px;
     margin: 0 auto;
   }
   .marca{
     display:flex;
-    align-items:center;
-    gap: 10px;
+    flex-direction: column;
   }
-  .marca-icone{
-    width: 40px;
-    height: 40px;
-    border-radius: 12px;
-    background: rgba(255,255,255,0.18);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size: 20px;
-    flex-shrink: 0;
+  .marca-sub {
+    font-size: 13px;
+    color: var(--navy-soft);
   }
   .marca-texto{
     font-family: "Sora", sans-serif;
-    font-weight: 700;
-    font-size: 20px;
-    color: #fff;
-    letter-spacing: -0.01em;
+    font-weight: 800;
+    font-size: 24px;
+    color: var(--navy);
+    letter-spacing: -0.03em;
   }
   .topo-acoes{
     display:flex;
-    gap: 8px;
+    gap: 12px;
   }
   .btn-icone-topo{
-    width: 42px;
-    height: 42px;
-    border-radius: 12px;
-    border: none;
-    background: rgba(255,255,255,0.18);
-    color: #fff;
-    font-size: 19px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    box-shadow: var(--shadow-out);
+    color: var(--navy);
+    font-size: 18px;
     cursor: pointer;
     display:flex;
     align-items:center;
     justify-content:center;
   }
-  .btn-icone-topo:hover{ background: rgba(255,255,255,0.3); }
-  .btn-icone-topo:active{ transform: scale(0.94); }
-
-  main{
-    max-width: 980px;
-    margin: 0 auto;
-    padding: 24px 20px;
+  .btn-icone-topo:active{
+    box-shadow: var(--shadow-btn-active);
   }
 
-  /* --- Navegador de mes --- */
+  main{
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  /* --- Avisos de Status --- */
+  .aviso {
+    max-width: 600px;
+    margin: 14px auto;
+    padding: 12px 18px;
+    border-radius: 14px;
+    font-size: 14px;
+    display: none;
+    box-shadow: var(--shadow-out);
+  }
+  .aviso.mostrar { display: block; }
+  .aviso.info { background: var(--amber-soft); color: var(--amber); }
+  .aviso.erro { background: var(--red-soft); color: var(--red); }
+
+  /* --- Navegador de Mês --- */
   .nav-mes{
     display:flex;
     align-items:center;
-    justify-content:center;
-    gap: 18px;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 14px 18px;
-    box-shadow: var(--shadow);
-    margin-bottom: 20px;
-    flex-wrap: wrap;
+    justify-content: space-between;
+    background: var(--bg);
+    margin-bottom: 24px;
   }
   .nav-mes button{
-    font-size: 22px;
-    width: 48px;
-    height: 48px;
-    border-radius: 10px;
+    font-size: 18px;
+    padding: 8px 16px;
+    border-radius: 12px;
     border: 1px solid var(--border);
-    background: var(--primaria-suave);
-    color: var(--primaria-escura);
+    background: var(--bg);
+    box-shadow: var(--shadow-out);
+    color: var(--navy);
     cursor:pointer;
-    font-weight: bold;
+    font-weight: 600;
   }
-  .nav-mes button:hover{ background: var(--primaria); color:#fff; }
+  .nav-mes button:active{ box-shadow: var(--shadow-btn-active); }
   .nav-mes .titulo-mes{
-    font-size: 26px;
+    font-size: 18px;
     font-family: "Sora", sans-serif;
-    min-width: 240px;
-    text-align:center;
-    font-weight: bold;
+    font-weight: 700;
+    color: var(--navy);
   }
-  .btn-hoje{
-    font-size: 15px !important;
-    width: auto !important;
-    height: auto !important;
-    padding: 10px 16px !important;
-    font-family: "Segoe UI", sans-serif;
-  }
+  .btn-hoje { font-size: 14px !important; }
 
-  /* --- Cartoes de resumo --- */
+  /* --- Resumos Neumórficos --- */
   .resumo{
     display:flex;
     flex-direction: column;
-    gap: 14px;
-    margin-bottom: 20px;
+    gap: 20px;
+    margin-bottom: 24px;
   }
+  
+  /* O Cartão Escuro do Print */
+  .cartao-resumo.cartao-saldo{
+    background: var(--card-dark);
+    color: var(--card-dark-text);
+    border-radius: 28px;
+    padding: 24px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+  }
+  .cartao-resumo.cartao-saldo .rotulo{
+    color: #8E8E93;
+    font-size: 13px;
+  }
+  .cartao-resumo.cartao-saldo .valor{
+    color: #fff;
+    font-size: 34px;
+    font-weight: 800;
+    margin: 10px 0;
+    font-family: "Sora", sans-serif;
+  }
+  .cartao-resumo.cartao-saldo .detalhes-linha {
+    display: flex;
+    justify-content: space-between;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 12px;
+    margin-top: 12px;
+    font-size: 13px;
+  }
+  .detalhes-linha div span {
+    display: block;
+    color: rgba(255,255,255,0.5);
+    font-size: 11px;
+    margin-bottom: 2px;
+  }
+  
   .resumo-linha{
     display:grid;
     grid-template-columns: 1fr 1fr;
-    gap: 14px;
+    gap: 16px;
   }
   .cartao-resumo{
     background: var(--card);
     border: 1px solid var(--border);
-    border-radius: 18px;
-    padding: 18px;
-    box-shadow: var(--shadow);
-    text-align:center;
-  }
-  .cartao-resumo.cartao-saldo{
-    background: var(--gradiente-marca);
-    border: none;
-    text-align: left;
-    padding: 24px 24px;
-    box-shadow: 0 10px 26px rgba(124,58,237,0.30);
-  }
-  .cartao-resumo.cartao-saldo .rotulo{
-    color: rgba(255,255,255,0.8);
-  }
-  .cartao-resumo.cartao-saldo .valor{
-    color: #fff;
-    font-size: 32px;
+    border-radius: 20px;
+    padding: 16px;
+    box-shadow: var(--shadow-out);
   }
   .cartao-resumo .rotulo{
-    font-size: 14px;
+    font-size: 12px;
     color: var(--navy-soft);
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
-    margin-bottom: 6px;
+    font-weight: 600;
+    margin-bottom: 4px;
   }
   .cartao-resumo .valor{
-    font-size: 22px;
+    font-size: 18px;
     font-weight: 700;
     font-family: "Sora", sans-serif;
-    font-variant-numeric: tabular-nums;
   }
   .cartao-resumo.pago .valor{ color: var(--teal-dark); }
   .cartao-resumo.pendente .valor{ color: var(--amber); }
 
-  /* barra de progresso (termometro) */
+  /* Termômetro de Progresso */
   .progresso-wrap{
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 16px 18px;
-    box-shadow: var(--shadow);
-    margin-bottom: 24px;
-  }
-  .progresso-wrap .legenda{
-    display:flex;
-    justify-content: space-between;
-    font-size: 15px;
-    color: var(--navy-soft);
-    margin-bottom: 8px;
+    margin-bottom: 28px;
   }
   .barra{
     width:100%;
-    height: 22px;
-    background: var(--amber-soft);
-    border-radius: 11px;
+    height: 6px;
+    background: var(--bg);
+    border-radius: 999px;
     overflow: hidden;
-    border: 1px solid var(--border);
+    box-shadow: var(--shadow-in);
   }
   .barra-preenchida{
     height:100%;
     background: var(--teal);
+    border-radius: 999px;
     transition: width 0.4s ease;
   }
 
-  /* --- Formulario (dentro do modal) --- */
-  .cartao{
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    box-shadow: var(--shadow);
-    padding: 20px;
-    margin-bottom: 24px;
-  }
-  .cartao h2{ font-size: 22px; margin-bottom: 14px; }
-
-  .tipos-conta{
-    display:flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    margin-bottom: 18px;
-  }
-  .tipo-btn{
-    flex: 1 1 160px;
-    padding: 14px 10px;
-    border-radius: 10px;
-    border: 2px solid var(--border);
-    background: #fff;
-    cursor:pointer;
-    font-size: 15px;
-    font-weight: 600;
-    color: var(--navy-soft);
-    text-align:center;
-  }
-  .tipo-btn.ativo{
-    border-color: var(--primaria);
-    background: var(--primaria-suave);
-    color: var(--primaria-escura);
-  }
-  .tipo-desc{
-    font-size: 14px;
-    color: var(--navy-soft);
-    margin: -10px 0 16px 0;
-  }
-
-  .campo{
-    margin-bottom: 14px;
-  }
-  .campo label{
-    display:block;
-    font-size: 15px;
-    font-weight: 600;
-    margin-bottom: 5px;
-    color: var(--navy);
-  }
-  .campo input, .campo select{
-    width: 100%;
-    padding: 12px 12px;
-    font-size: 17px;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    background: #FBFDFC;
-    color: var(--navy);
-  }
-  .campo input:focus, .campo select:focus{
-    outline: 3px solid var(--primaria);
-    outline-offset: 1px;
-  }
-  .linha-campos{
-    display:grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 14px;
-  }
-  @media (max-width: 640px){
-    .linha-campos{ grid-template-columns: 1fr; }
-  }
-
-  /* --- Ajustes gerais para celular --- */
-  @media (max-width: 600px){
-    body{ font-size: 16px; }
-
-    .topo-linha{ gap: 8px; }
-    .marca-texto{ font-size: 17px; }
-    .marca-icone{ width: 36px; height: 36px; font-size: 17px; }
-    .btn-icone-topo{ width: 38px; height: 38px; font-size: 17px; }
-
-    main{ padding: 16px 12px; }
-
-    .nav-mes{ padding: 10px 12px; gap: 10px; }
-    .nav-mes .titulo-mes{ font-size: 19px; min-width: 0; flex: 1 1 auto; }
-    .nav-mes button{ width: 40px; height: 40px; font-size: 18px; flex: 0 0 auto; }
-    .btn-hoje{ flex: 1 1 100%; order: 3; }
-
-    .cartao-resumo.cartao-saldo{ padding: 20px; }
-    .cartao-resumo.cartao-saldo .valor{ font-size: 26px; }
-    .cartao-resumo{ padding: 14px 10px; }
-    .cartao-resumo .rotulo{ font-size: 12px; }
-    .cartao-resumo .valor{ font-size: 18px; }
-
-    .cartao{ padding: 16px 14px; }
-    .tipos-conta{ flex-direction: column; }
-    .tipo-btn{ flex: 1 1 auto; }
-
-    .busca-wrap{ flex-direction: column; }
-    .chip-toggle{ width: 100%; }
-
-    .conta-item{ padding: 14px; gap: 8px; }
-    .conta-desc{ font-size: 16px; }
-    .conta-valor{ min-width: 0; flex: 1 1 auto; text-align: left; font-size: 18px; }
-    .conta-info{ flex: 1 1 100%; }
-    .conta-acoes{ flex: 1 1 100%; justify-content: flex-start; }
-    .btn-status{ flex: 1 1 auto; }
-
-    .rel-resumo{ flex-direction: column; }
-
-    .fab{ width: 56px; height: 56px; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); }
-    .fab-icone{ font-size: 28px; }
-  }
-
-  .btn-principal{
-    background: var(--primaria);
-    color: #fff;
-    border: none;
-    padding: 14px 22px;
+  /* --- Listagem --- */
+  .lista-header h2 {
     font-size: 18px;
-    font-weight: bold;
-    border-radius: 10px;
-    cursor: pointer;
-    width: 100%;
-  }
-  .btn-principal:hover{ background: var(--primaria-escura); }
-
-  .ajuda{
-    font-size: 14px;
-    color: var(--navy-soft);
-    margin-top: -8px;
-    margin-bottom: 14px;
-  }
-
-  /* --- Lista de contas --- */
-  .lista-header{
-    display:flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-  }
-
-  /* --- Barra de busca --- */
-  .busca-wrap{
-    display:flex;
-    gap: 10px;
-    flex-wrap: wrap;
+    color: var(--navy);
     margin-bottom: 16px;
   }
-  .busca-input-wrap{
-    position: relative;
-    flex: 1 1 260px;
-    display:flex;
-    align-items:center;
-  }
-  .busca-icone{
-    position:absolute;
-    left: 14px;
-    font-size: 17px;
-    pointer-events:none;
-    opacity: 0.6;
+
+  .busca-wrap{
+    margin-bottom: 20px;
   }
   .busca-input-wrap input{
     width:100%;
-    padding: 13px 44px 13px 42px;
-    font-size: 17px;
-    border-radius: 10px;
-    border: 1px solid var(--border);
-    background: var(--card);
-    color: var(--navy);
-    box-shadow: var(--shadow);
-  }
-  .busca-input-wrap input:focus{
-    outline: 3px solid var(--primaria);
-    outline-offset: 1px;
-  }
-  .btn-limpar-busca{
-    position:absolute;
-    right: 8px;
-    width: 34px;
-    height: 34px;
-    border-radius: 8px;
-    border: none;
-    background: #ECEFEE;
-    color: var(--navy-soft);
-    font-size: 16px;
-    cursor:pointer;
-  }
-  .btn-limpar-busca:hover{ background: #DEE3E2; }
-  .chip-toggle{
-    flex: 0 0 auto;
-    padding: 13px 16px;
-    border-radius: 10px;
-    border: 2px solid var(--border);
-    background: var(--card);
-    color: var(--navy-soft);
+    padding: 16px 20px;
     font-size: 15px;
-    font-weight: 600;
-    cursor:pointer;
-    box-shadow: var(--shadow);
-    white-space: nowrap;
-  }
-  .chip-toggle.ativo{
-    border-color: var(--primaria);
-    background: var(--primaria-suave);
-    color: var(--primaria-escura);
-  }
-  .aviso-busca-global{
-    text-align:center;
-    font-size: 14px;
-    color: var(--navy-soft);
-    background: var(--primaria-suave);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 10px 14px;
-    margin-bottom: 14px;
+    border-radius: 16px;
+    border: none;
+    background: var(--bg);
+    color: var(--navy);
+    box-shadow: var(--shadow-in);
+    outline: none;
   }
 
+  .chip-toggle{
+    margin-top: 10px;
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--navy-soft);
+    font-size: 14px;
+    font-weight: 600;
+    cursor:pointer;
+    box-shadow: var(--shadow-out);
+  }
+  .chip-toggle.ativo{
+    box-shadow: var(--shadow-btn-active);
+    color: var(--navy);
+  }
+
+  /* Linhas de Transações */
   .conta-item{
     background: var(--card);
     border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 12px;
+    border-radius: 20px;
+    padding: 18px;
+    margin-bottom: 14px;
     display:flex;
     align-items:center;
     justify-content: space-between;
-    gap: 12px;
-    flex-wrap: wrap;
-    box-shadow: var(--shadow);
+    box-shadow: var(--shadow-out);
   }
-  .conta-item.pago{ border-left: 6px solid var(--teal); }
-  .conta-item.pendente{ border-left: 6px solid var(--amber); }
+  .conta-info{ display: flex; flex-direction: column; }
+  .conta-desc{ font-size: 16px; font-weight: 600; color: var(--navy); }
+  .conta-sub{ font-size: 12px; color: var(--navy-soft); margin-top: 4px; }
+  
+  .conta-valor-wrapper { text-align: right; margin-right: 12px; }
+  .conta-valor{ font-size: 16px; font-weight: 700; font-family: "Sora", sans-serif; }
 
-  .conta-info{ flex: 1 1 260px; }
-  .conta-desc{ font-size: 18px; font-weight: 600; }
-  .conta-sub{ font-size: 14px; color: var(--navy-soft); margin-top: 2px; }
-  .conta-valor{ font-size: 19px; font-weight: 700; font-family: "Sora", sans-serif; font-variant-numeric: tabular-nums; min-width: 130px; text-align:right; }
-
-  .conta-acoes{
-    display:flex;
-    gap: 8px;
-    align-items:center;
-  }
+  .conta-acoes{ display:flex; gap: 8px; align-items:center; }
+  
   .btn-status{
-    padding: 10px 16px;
+    padding: 6px 12px;
     border-radius: 999px;
     border: none;
-    font-size: 14px;
+    font-size: 11px;
     font-weight: 700;
     cursor:pointer;
   }
-  .btn-status.pago{ background: var(--teal-soft); color: var(--teal-dark); }
-  .btn-status.pendente{ background: var(--amber-soft); color: var(--amber); }
+  .btn-status.pago { background: var(--teal-soft); color: var(--teal-dark); }
+  .btn-status.pendente { background: var(--amber-soft); color: var(--amber); }
 
   .btn-icone{
-    width: 42px;
-    height: 42px;
-    border-radius: 8px;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
     border: 1px solid var(--border);
-    background: #fff;
-    font-size: 18px;
+    background: var(--bg);
+    box-shadow: var(--shadow-out);
+    font-size: 14px;
     cursor:pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
-  .btn-icone:hover{ background: #f0f0f0; }
-  .btn-icone.excluir:hover{ background: #FBEAEA; border-color: var(--red); }
-
-  .vazio{
-    text-align:center;
-    padding: 40px 20px;
-    color: var(--navy-soft);
-    background: var(--card);
-    border: 1px dashed var(--border);
-    border-radius: 14px;
-    font-size: 17px;
-  }
+  .btn-icone:active{ box-shadow: var(--shadow-btn-active); }
 
   /* Modais */
   .fundo-modal{
     display:none;
     position: fixed;
     inset: 0;
-    background: rgba(15,10,20,0.55);
-    align-items: center;
+    background: rgba(0,0,0,0.3);
+    backdrop-filter: blur(8px);
+    align-items: flex-end;
     justify-content: center;
     z-index: 50;
-    padding: 16px;
   }
+  @media (min-width: 601px) { .fundo-modal { align-items: center; padding: 20px; } }
   .fundo-modal.aberto{ display:flex; }
+  
   .modal{
-    background: var(--card);
-    color: var(--navy);
-    border-radius: 20px;
-    max-width: 420px;
+    background: var(--bg);
+    border-radius: 32px 32px 0 0;
+    max-width: 500px;
     width: 100%;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    box-shadow: 0 -10px 40px rgba(0,0,0,0.1);
     max-height: 90vh;
     display:flex;
     flex-direction: column;
     overflow: hidden;
+    padding: 24px;
   }
-  .modal.modal-largo{ max-width: 560px; }
+  @media (min-width: 601px) { .modal { border-radius: 28px; max-height: 85vh; } }
 
-  .modal-cabecalho{
-    display:flex;
-    justify-content: space-between;
-    align-items:center;
-    gap: 12px;
-    padding: 20px 20px 14px 20px;
-    flex-shrink: 0;
-    border-bottom: 1px solid var(--border);
-  }
-  .modal-cabecalho h2, .modal-cabecalho h3{ margin:0; font-size: 21px; }
-
-  .btn-fechar-modal{
-    background: var(--red-soft);
+  .campo input, .campo select{
+    width: 100%;
+    padding: 14px;
+    font-size: 15px;
+    border-radius: 14px;
     border: none;
-    font-size: 20px;
-    font-weight: 800;
-    cursor: pointer;
-    color: var(--red);
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    flex-shrink: 0;
+    background: var(--bg);
+    color: var(--navy);
+    box-shadow: var(--shadow-in);
+    outline: none;
   }
-  .btn-fechar-modal:hover{ background: var(--red); color:#fff; }
-  .btn-fechar-modal:active{ transform: scale(0.92); }
 
-  /* corpo com rolagem; formulario vira coluna flexivel para o rodape colar embaixo */
-  .modal-corpo{
-    padding: 18px 20px;
-    overflow-y: auto;
-    flex: 1 1 auto;
-    min-height: 0;
-  }
-  .modal form{
-    display:flex;
-    flex-direction: column;
-    flex: 1 1 auto;
-    min-height: 0;
-    overflow: hidden;
-  }
-  .modal-rodape{
-    flex-shrink: 0;
-    padding: 14px 20px;
-    padding-bottom: max(14px, env(safe-area-inset-bottom, 0px));
-    border-top: 1px solid var(--border);
-    background: var(--card);
-  }
-  .modal-rodape .btn-principal{ margin: 0; }
-
-  .modal-acoes{
-    display:flex;
-    gap: 10px;
-  }
-  .btn-secundario{
-    background: var(--primaria-suave);
-    color: var(--primaria-escura);
-    border: none;
-    padding: 14px 22px;
-    font-size: 16px;
-    font-weight: bold;
-    border-radius: 10px;
-    cursor: pointer;
-    flex: 1;
-  }
-  .btn-perigo{
-    background: var(--red);
+  .btn-principal{
+    background: var(--navy);
     color: #fff;
     border: none;
-    padding: 14px 22px;
+    padding: 16px;
     font-size: 16px;
-    font-weight: bold;
-    border-radius: 10px;
+    font-weight: 700;
+    border-radius: 16px;
+    cursor: pointer;
+    width: 100%;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+  }
+
+  .tipos-conta { display: flex; gap: 8px; margin-bottom: 16px; }
+  .tipo-btn {
+    flex: 1;
+    padding: 10px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    font-size: 12px;
+    font-weight: 600;
+    box-shadow: var(--shadow-out);
     cursor: pointer;
   }
-  .btn-perigo:hover{ filter: brightness(0.92); }
-  .btn-perigo:disabled{ opacity: 0.6; cursor: default; }
+  .tipo-btn.ativo { box-shadow: var(--shadow-in); color: var(--teal-dark); }
 
-  /* --- Modal de confirmar exclusao --- */
-  .excluir-icone-alerta{
+  .fab{
+    position: fixed;
+    right: 24px;
+    bottom: calc(24px + env(safe-area-inset-bottom, 0px));
     width: 56px;
     height: 56px;
     border-radius: 50%;
-    background: var(--red-soft);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size: 26px;
-    margin: 4px auto 16px auto;
-  }
-  .excluir-cartao-conta{
-    background: var(--bg);
     border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 16px;
-    text-align:center;
-    margin-bottom: 16px;
-  }
-  .excluir-conta-desc{
-    font-size: 17px;
-    font-weight: 700;
+    background: var(--bg);
     color: var(--navy);
-  }
-  .excluir-conta-valor{
-    font-size: 22px;
-    font-weight: 800;
-    font-family: "Sora", sans-serif;
-    font-variant-numeric: tabular-nums;
-    color: var(--navy);
-    margin: 4px 0;
-  }
-  .excluir-conta-sub{
-    font-size: 14px;
-    color: var(--navy-soft);
-  }
-  .excluir-texto{
-    text-align:center;
-    font-size: 15px;
-    color: var(--navy-soft);
-    margin: 0 0 4px 0;
-  }
-  .excluir-aviso-grupo{
-    background: var(--amber-soft);
-    color: var(--amber);
-    border: 1px solid var(--amber);
-    border-radius: 12px;
-    padding: 12px 14px;
-    font-size: 14px;
-    line-height: 1.5;
-    margin-top: 14px;
-  }
-  .excluir-aviso-grupo b{ color: inherit; }
-
-  /* --- Em telas de celular, os modais viram uma tela cheia (mais facil de usar) --- */
-  @media (max-width: 600px){
-    .fundo-modal{ padding: 0; }
-    .modal, .modal.modal-largo{
-      max-width: 100%;
-      width: 100%;
-      height: 100%;
-      max-height: 100%;
-      border-radius: 0;
-    }
-    .modal-cabecalho{
-      padding: max(18px, env(safe-area-inset-top, 0px)) 16px 14px 16px;
-    }
-    .modal-cabecalho h2, .modal-cabecalho h3{ font-size: 20px; }
-    .btn-fechar-modal{ width: 44px; height: 44px; font-size: 22px; }
-    .modal-corpo{ padding: 16px; }
-    .modal-rodape{ padding: 14px 16px max(14px, env(safe-area-inset-bottom, 0px)) 16px; }
-  }
-
-  /* --- Opcoes de relatorio --- */
-  .opcoes-relatorio{
-    display:flex;
-    flex-direction: column;
-    gap: 12px;
-    margin-bottom: 10px;
-  }
-  .opcao-relatorio{
-    padding: 16px;
-    border: 2px solid var(--border);
-    border-radius: 10px;
-    text-align:left;
-    background: #fff;
-    cursor:pointer;
-    font-size: 16px;
-    color: var(--navy);
-  }
-  .opcao-relatorio:hover{ border-color: var(--primaria); background: var(--primaria-suave); }
-  .opcao-relatorio b{ display:block; font-size: 17px; margin-bottom: 3px; }
-  .opcao-relatorio span{ font-size: 14px; color: var(--navy-soft); }
-
-  .rodape-nota{
-    text-align:center;
-    color: var(--navy-soft);
-    font-size: 13px;
-    margin-top: 30px;
-  }
-
-  /* --- Botao flutuante de adicionar conta (FAB) --- */
-  .fab{
-    position: fixed;
-    right: 22px;
-    bottom: calc(22px + env(safe-area-inset-bottom, 0px));
-    width: 62px;
-    height: 62px;
-    border-radius: 50%;
-    border: none;
-    background: var(--gradiente-marca);
-    color: #fff;
-    box-shadow: 0 8px 22px rgba(124,58,237,0.4);
+    box-shadow: var(--shadow-out);
     display:flex;
     align-items:center;
     justify-content:center;
     cursor: pointer;
     z-index: 40;
   }
-  .fab:hover{ filter: brightness(1.08); }
-  .fab:active{ transform: scale(0.94); }
-  .fab-icone{
-    font-size: 32px;
-    font-weight: 400;
-    line-height: 1;
-    margin-top: -2px;
-  }
-
-  /* --- Area de impressao (relatorio em PDF) --- */
-  #areaImpressao{ display:none; }
-
-  @media print{
-    header.topo, .nav-mes, .acoes-principais, .resumo, .progresso-wrap,
-    .cartao, .lista-header, .busca-wrap, .aviso-busca-global, #listaContas,
-    .rodape-nota, .fundo-modal, .aviso, .fab{
-      display:none !important;
-    }
-    #areaImpressao{
-      display:block !important;
-    }
-    body{ background:#fff; font-size: 13px; padding:0; }
-  }
-
-  /* ======================================================================
-     Relatorio em PDF: estas regras usam cores fixas (preto/cinza/branco) de
-     proposito, para o relatorio impresso ficar sempre igual e legivel,
-     independente do tema (claro/escuro) que estiver ativo na tela.
-     ====================================================================== */
-  #areaImpressao{
-    display:none;
-    color: #111111;
-    background: #ffffff;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
-  #areaImpressao *{
-    color: #111111;
-  }
-  .rel-cabecalho{
-    text-align:center;
-    margin-bottom: 22px;
-    border-bottom: 3px solid #111111;
-    padding-bottom: 14px;
-  }
-  .rel-cabecalho h2{
-    font-size: 22px;
-    margin-bottom: 4px;
-    font-weight: 800;
-    letter-spacing: -0.01em;
-  }
-  .rel-cabecalho p{ margin:0; color:#555555 !important; font-size: 13px; }
-  .rel-resumo{
-    display:flex;
-    justify-content: space-around;
-    margin-bottom: 20px;
-    gap: 10px;
-  }
-  .rel-resumo div{
-    text-align:center;
-    border: 1px solid #111111;
-    border-radius: 6px;
-    padding: 10px 14px;
-    flex:1;
-  }
-  .rel-resumo .rot{ font-size:11px; color:#555555 !important; text-transform:uppercase; letter-spacing: 0.04em; }
-  .rel-resumo .val{ font-size:18px; font-weight:800; }
-  table.rel-tabela{
-    width:100%;
-    border-collapse: collapse;
-    margin-bottom: 24px;
-  }
-  table.rel-tabela th, table.rel-tabela td{
-    border: 1px solid #999999;
-    padding: 8px 10px;
-    text-align:left;
-    font-size: 12.5px;
-  }
-  table.rel-tabela th{
-    background: #EAEAEA;
-    font-weight: 700;
-    text-transform: uppercase;
-    font-size: 10.5px;
-    letter-spacing: 0.03em;
-  }
-  table.rel-tabela tbody tr:nth-child(even){ background: #F7F7F7; }
-  table.rel-tabela .status-pago{ font-weight: 800; }
-  table.rel-tabela .status-pendente{ font-weight: 400; color:#555555 !important; }
-  .rel-mes-titulo{
-    font-size: 15px;
-    font-weight: 800;
-    margin: 20px 0 8px 0;
-    border-left: 4px solid #111111;
-    padding-left: 8px;
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
-  }
-  .rel-rodape{
-    margin-top: 16px;
-    font-size: 11px;
-    color: #777777 !important;
-    text-align:center;
-  }
-
-
-  .aviso{
-    max-width: 980px;
-    margin: 14px auto 0 auto;
-    padding: 12px 18px;
-    border-radius: 10px;
-    font-size: 14px;
-    display: none;
-  }
-  .aviso.mostrar{ display:block; }
-  .aviso.info{ background: var(--amber-soft); color: var(--amber); border:1px solid var(--amber); }
-  .aviso.erro{ background: var(--red-soft); color: var(--red); border:1px solid var(--red); }
-  .aviso.sucesso{ background: var(--teal-soft); color: var(--teal-dark); border:1px solid var(--teal); }
+  .fab-icone{ font-size: 28px; font-weight: 300; }
+  .vazio { text-align: center; padding: 40px; color: var(--navy-soft); font-size: 14px; }
+  .rodape-nota { text-align: center; color: var(--navy-soft); font-size: 12px; margin-top: 30px; padding: 0 20px; }
 </style>
 </head>
 <body>
@@ -916,12 +456,12 @@
 <header class="topo">
   <div class="topo-linha">
     <div class="marca">
-      <span class="marca-icone">💜</span>
-      <span class="marca-texto">Meus Gastos</span>
+      <span class="marca-sub">Bem vinda de volta,</span>
+      <span class="marca-texto">Andressa</span>
     </div>
     <div class="topo-acoes">
-      <button id="btnAbrirRelatorio" class="btn-icone-topo" title="Baixar relatorio em PDF">📄</button>
-      <button id="btnTema" class="btn-icone-topo" title="Alternar tema claro/escuro">🌙</button>
+      <button id="btnAbrirRelatorio" class="btn-icone-topo" title="Baixar relatório">📄</button>
+      <button id="btnTema" class="btn-icone-topo" title="Trocar Tema">🌙</button>
     </div>
   </div>
 </header>
@@ -931,21 +471,39 @@
 <main>
 
   <div class="nav-mes">
-    <button id="btnMesAnterior" title="Mes anterior">&#8249;</button>
-    <div class="titulo-mes" id="tituloMes">Agosto de 2026</div>
-    <button id="btnProximoMes" title="Proximo mes">&#8250;</button>
-    <button class="btn-hoje" id="btnHoje">Ir para hoje</button>
+    <button id="btnMesAnterior">&#8249;</button>
+    <div class="titulo-mes" id="tituloMes">-</div>
+    <button id="btnProximoMes">&#8250;</button>
+    <button class="btn-hoje" id="btnHoje">Hoje</button>
   </div>
 
   <div class="resumo">
     <div class="cartao-resumo previsto cartao-saldo">
-      <div class="rotulo">Total previsto do mes</div>
+      <div class="rotulo">Disponível</div>
       <div class="valor" id="totalPrevisto">R$ 0,00</div>
+      
+      <div class="progresso-wrap" style="margin: 12px 0 0 0;">
+        <div class="barra" style="height: 4px; background: #333; box-shadow: none;">
+          <div class="barra-preenchida" id="barraPreenchida" style="width:0%"></div>
+        </div>
+      </div>
+
+      <div class="detalhes-linha">
+        <div>
+          <span>Entradas</span>
+          <strong>R$ 0,00</strong>
+        </div>
+        <div style="text-align: right;">
+          <span>Saídas</span>
+          <strong id="totalPago" style="color: #fff;">R$ 0,00</strong>
+        </div>
+      </div>
     </div>
+    
     <div class="resumo-linha">
       <div class="cartao-resumo pago">
-        <div class="rotulo">Ja pago</div>
-        <div class="valor" id="totalPago">R$ 0,00</div>
+        <div class="rotulo">Total Pago</div>
+        <div class="valor" id="totalPagoCard">R$ 0,00</div>
       </div>
       <div class="cartao-resumo pendente">
         <div class="rotulo">Falta pagar</div>
@@ -954,201 +512,97 @@
     </div>
   </div>
 
-  <div class="progresso-wrap">
-    <div class="legenda">
-      <span>Progresso de pagamentos do mes</span>
-      <span id="progressoPercentual">0%</span>
-    </div>
-    <div class="barra"><div class="barra-preenchida" id="barraPreenchida" style="width:0%"></div></div>
-  </div>
-
   <div class="lista-header">
-    <h2 id="tituloLista">Contas de Agosto</h2>
+    <h2 id="tituloLista">Últimas transações</h2>
   </div>
 
   <div class="busca-wrap">
     <div class="busca-input-wrap">
-      <span class="busca-icone">&#128269;</span>
-      <input type="text" id="campoBusca" placeholder="Buscar por descricao...">
-      <button id="btnLimparBusca" class="btn-limpar-busca" title="Limpar busca" style="display:none;">&#10005;</button>
+      <input type="text" id="campoBusca" placeholder="Buscar por descrição...">
     </div>
-    <button id="btnBuscarTodosMeses" class="chip-toggle" title="Buscar em todos os meses e anos">Buscar em todos os meses</button>
+    <button id="btnBuscarTodosMeses" class="chip-toggle">Buscar em todos os meses</button>
   </div>
 
-  <div class="aviso-busca-global" id="avisoBuscaGlobal" style="display:none;">Mostrando resultados de todos os meses e anos cadastrados.</div>
+  <div class="aviso-busca-global" id="avisoBuscaGlobal" style="display:none;">Mostrando resultados globais.</div>
 
   <div id="listaContas"></div>
 
 </main>
 
-<!-- Modal: adicionar conta -->
 <div class="fundo-modal" id="fundoModalAdicionar">
-  <div class="modal modal-largo">
-    <div class="modal-cabecalho">
-      <h2>Adicionar uma conta</h2>
-      <button class="btn-fechar-modal" id="btnFecharAdicionar" title="Fechar">&#10005;</button>
+  <div class="modal">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+      <h3>Nova Lançamento</h3>
+      <button id="btnFecharAdicionar" style="background:none; border:none; font-size:20px; color:var(--navy-soft); cursor:pointer;">&#10005;</button>
     </div>
-
     <form id="formConta">
-      <div class="modal-corpo">
-        <div class="tipos-conta">
-          <button class="tipo-btn ativo" data-tipo="unica" type="button">Conta unica</button>
-          <button class="tipo-btn" data-tipo="parcelada" type="button">Compra parcelada</button>
-          <button class="tipo-btn" data-tipo="fixa" type="button">Despesa fixa por varios meses</button>
-        </div>
-        <div class="tipo-desc" id="tipoDescricao">
-          Uma conta que acontece uma unica vez, em um mes especifico.
-        </div>
-
-        <div class="campo">
-          <label for="descricao">Descricao da conta</label>
-          <input type="text" id="descricao" placeholder="Ex: Conta de luz, Cartao de credito, TV nova..." required>
-        </div>
-
-        <div class="linha-campos">
-          <div class="campo">
-            <label id="rotuloValor" for="valor">Valor (R$)</label>
-            <input type="number" id="valor" step="0.01" min="0" placeholder="0,00" required>
-          </div>
-          <div class="campo">
-            <label for="diaVencimento">Dia do vencimento (opcional)</label>
-            <input type="number" id="diaVencimento" min="1" max="31" placeholder="Ex: 10">
-          </div>
-        </div>
-
-        <div class="linha-campos">
-          <div class="campo">
-            <label for="mesInicial">Mes inicial</label>
-            <select id="mesInicial"></select>
-          </div>
-          <div class="campo">
-            <label for="anoInicial">Ano inicial</label>
-            <select id="anoInicial"></select>
-          </div>
-        </div>
-
-        <div class="campo" id="campoParcelas" style="display:none;">
-          <label id="rotuloParcelas" for="numParcelas">Numero de parcelas</label>
-          <input type="number" id="numParcelas" min="2" max="60" placeholder="Ex: 10">
-          <div class="ajuda" id="ajudaParcelas"></div>
-        </div>
+      <div class="tipos-conta">
+        <button class="tipo-btn ativo" data-tipo="unica" type="button">Única</button>
+        <button class="tipo-btn" data-tipo="parcelada" type="button">Parcelada</button>
+        <button class="tipo-btn" data-tipo="fixa" type="button">Fixa</button>
       </div>
-
-      <div class="modal-rodape">
-        <button type="submit" class="btn-principal">Adicionar conta</button>
+      <div class="campo" style="margin-bottom:14px;">
+        <input type="text" id="descricao" placeholder="Descrição da conta" required>
       </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px;">
+        <div class="campo"><input type="number" id="valor" step="0.01" min="0" placeholder="Valor R$" required></div>
+        <div class="campo"><input type="number" id="diaVencimento" min="1" max="31" placeholder="Dia Vencimento"></div>
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px;">
+        <div class="campo"><select id="mesInicial"></select></div>
+        <div class="campo"><select id="anoInicial"></select></div>
+      </div>
+      <div class="campo" id="campoParcelas" style="display:none; margin-bottom:14px;">
+        <input type="number" id="numParcelas" min="2" max="60" placeholder="Número de parcelas">
+      </div>
+      <button type="submit" class="btn-principal" id="btnSalvarNovaConta">Adicionar conta</button>
     </form>
   </div>
 </div>
 
-<!-- Modal: editar conta -->
 <div class="fundo-modal" id="fundoModal">
   <div class="modal">
-    <div class="modal-cabecalho">
-      <h3>Editar conta</h3>
-      <button class="btn-fechar-modal" id="btnFecharEdicao" title="Fechar">&#10005;</button>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+      <h3>Editar transação</h3>
+      <button id="btnFecharEdicao" style="background:none; border:none; font-size:20px; color:var(--navy-soft); cursor:pointer;">&#10005;</button>
     </div>
-    <div class="modal-corpo">
-      <div class="campo">
-        <label for="editDescricao">Descricao</label>
-        <input type="text" id="editDescricao">
-      </div>
-      <div class="linha-campos">
-        <div class="campo">
-          <label for="editValor">Valor (R$)</label>
-          <input type="number" id="editValor" step="0.01" min="0">
-        </div>
-        <div class="campo">
-          <label for="editDia">Dia do vencimento</label>
-          <input type="number" id="editDia" min="1" max="31">
-        </div>
-      </div>
+    <div class="campo" style="margin-bottom:14px;"><input type="text" id="editDescricao"></div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:20px;">
+      <div class="campo"><input type="number" id="editValor" step="0.01"></div>
+      <div class="campo"><input type="number" id="editDia" min="1" max="31"></div>
     </div>
-    <div class="modal-rodape">
-      <div class="modal-acoes">
-        <button class="btn-secundario" id="btnCancelarEdicao">Cancelar</button>
-        <button class="btn-principal" id="btnSalvarEdicao" style="flex:1;">Salvar</button>
-      </div>
+    <div style="display:flex; gap:10px;">
+      <button class="chip-toggle" id="btnCancelarEdicao" style="margin:0;">Cancelar</button>
+      <button class="btn-principal" id="btnSalvarEdicao" style="flex:1;">Salvar</button>
     </div>
   </div>
 </div>
 
-<!-- Modal: confirmar exclusao de conta -->
 <div class="fundo-modal" id="fundoModalExcluir">
-  <div class="modal">
-    <div class="modal-cabecalho">
-      <h3>Excluir conta?</h3>
-      <button class="btn-fechar-modal" id="btnFecharExcluir" title="Fechar">&#10005;</button>
-    </div>
-    <div class="modal-corpo">
-      <div class="excluir-icone-alerta">🗑️</div>
-
-      <div class="excluir-cartao-conta">
-        <div class="excluir-conta-desc" id="excluirDescricao">Descricao da conta</div>
-        <div class="excluir-conta-valor" id="excluirValor">R$ 0,00</div>
-        <div class="excluir-conta-sub" id="excluirDetalhes">Agosto de 2026</div>
-      </div>
-
-      <p class="excluir-texto" id="excluirTextoPrincipal">Tem certeza que deseja excluir esta conta? Essa acao nao pode ser desfeita.</p>
-
-      <div class="excluir-aviso-grupo" id="excluirAvisoGrupo" style="display:none;">
-        ⚠️ Esta conta faz parte de um <b>parcelamento</b>. Ao confirmar, <b>todas as parcelas</b> desta compra serao excluidas — as que ja foram pagas e as que ainda estao pendentes, em todos os meses.
-      </div>
-    </div>
-    <div class="modal-rodape">
-      <div class="modal-acoes">
-        <button class="btn-secundario" id="btnCancelarExcluir">Cancelar</button>
-        <button class="btn-perigo" id="btnConfirmarExcluir" style="flex:1;">Excluir</button>
-      </div>
+  <div class="modal" style="text-align:center;">
+    <h3>Excluir conta?</h3>
+    <p id="excluirDescricao" style="font-weight:700; margin:4px 0;"></p>
+    <p id="excluirValor" style="font-size:20px; font-weight:800; color:var(--red); margin:0 0 16px 0;"></p>
+    <p id="excluirAvisoGrupo" style="display:none; font-size:12px; color:var(--amber);">⚠️ Isso excluirá todo o parcelamento.</p>
+    <div style="display:flex; gap:10px;">
+      <button class="chip-toggle" id="btnCancelarExcluir" style="margin:0;">Cancelar</button>
+      <button class="btn-principal" id="btnConfirmarExcluir" style="flex:1; background:var(--red);">Excluir</button>
     </div>
   </div>
 </div>
 
-<!-- Modal: opcoes de relatorio -->
-<div class="fundo-modal" id="fundoModalRelatorio">
-  <div class="modal">
-    <div class="modal-cabecalho">
-      <h3>Baixar relatorio em PDF</h3>
-      <button class="btn-fechar-modal" id="btnFecharRelatorio" title="Fechar">&#10005;</button>
-    </div>
-    <div class="modal-corpo">
-      <p style="font-size:15px; color:var(--navy-soft); margin-top:0;">Escolha o que deseja incluir no relatorio. Depois, na janela de impressao, selecione "Salvar como PDF" e escolha onde guardar o arquivo.</p>
-      <div class="opcoes-relatorio">
-        <button class="opcao-relatorio" id="btnRelatorioMes">
-          <b id="rotuloRelatorioMes">Relatorio do mes atual</b>
-          <span>Somente as contas do mes que esta sendo visualizado</span>
-        </button>
-        <button class="opcao-relatorio" id="btnRelatorioAno">
-          <b>Relatorio do ano todo</b>
-          <span>Todas as contas cadastradas no ano, organizadas mes a mes</span>
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
+<button id="btnAbrirAdicionar" class="fab" title="Adicionar conta"><span class="fab-icone">+</span></button>
 
-<!-- Conteudo usado apenas na hora de imprimir/gerar PDF -->
-<div id="areaImpressao"></div>
+<p class="rodape-nota" id="rodapeNota">Carregando configurações de armazenamento...</p>
 
-<p class="rodape-nota" id="rodapeNota">Os dados ficam salvos neste computador, neste navegador. Use sempre o mesmo navegador para acessar suas contas.</p>
-
-<button id="btnAbrirAdicionar" class="fab" title="Adicionar conta" aria-label="Adicionar conta">
-  <span class="fab-icone">+</span>
-</button>
-
-<!-- Biblioteca do Supabase (necessaria apenas se voce configurar SUPABASE_URL / SUPABASE_ANON_KEY abaixo) -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <script>
 (function(){
   // ======================================================================
-  // CONFIGURACAO DO SUPABASE
-  // Cole aqui a URL do seu projeto e a chave "anon public" (Settings > API).
-  // Enquanto nao configurar, o site funciona normalmente salvando os dados
-  // so neste navegador (modo local), como antes.
+  // CONFIGURAÇÃO DO SUPABASE (SUA INTEGRAÇÃO ORIGINAL)
   // ======================================================================
   var SUPABASE_URL = "https://xtfzusdvbfjoezbkstkq.supabase.co"; 
-  var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh0Znp1c2R2YmZqb2V6YmtzdGtxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM0NjgxMzQsImV4cCI6MjA5OTA0NDEzNH0.x0DFqbKWclrTVDF4jKQwJ4XkYHXTSmgLhMU9vZJohXo";
+  var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh0Znp1c2R2YmZqb2V6YmtzdGtxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM0NjgxMzQsImV4cCI6MjA5OTA0NDEzNH0.x0DFqbKWclrTVDF4jKQwJ4XkYHXTSmgLhMU9vZJohXo"; 
 
   var supabaseConfigurado = SUPABASE_URL.indexOf("COLE_AQUI") === -1 && SUPABASE_ANON_KEY.indexOf("COLE_AQUI") === -1;
   var supabaseClient = null;
@@ -1156,155 +610,59 @@
     supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   }
 
-  var NOMES_MES = ["Janeiro","Fevereiro","Marco","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+  var NOMES_MES = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
   var CHAVE_ARMAZENAMENTO = "controleGastos_contas_v1";
 
   function mostrarAviso(mensagem, tipo){
     var el = document.getElementById("avisoStatus");
-    el.textContent = mensagem;
-    el.className = "aviso mostrar " + (tipo || "info");
+    el.textContent = mensagem; el.className = "aviso mostrar " + (tipo || "info");
   }
-  function esconderAviso(){
-    document.getElementById("avisoStatus").className = "aviso";
-  }
+  function esconderAviso(){ document.getElementById("avisoStatus").className = "aviso"; }
 
   if(supabaseConfigurado){
-    document.getElementById("rodapeNota").textContent =
-      "Seus dados ficam salvos no seu banco de dados na nuvem (Supabase). Voce pode acessar de qualquer computador por este mesmo link.";
+    document.getElementById("rodapeNota").textContent = "Seus dados ficam salvos na nuvem (Supabase).";
   } else {
-    mostrarAviso("Este site ainda esta salvando os dados so neste navegador. Para acessar suas contas de qualquer computador, configure o Supabase (veja o arquivo COMO-CONFIGURAR.md).", "info");
-  }
-
-  // ---- Tema claro / escuro (respeita o sistema, mas pode ser trocado manualmente) ----
-  var CHAVE_TEMA = "controleGastos_tema";
-  var btnTema = document.getElementById("btnTema");
-
-  function atualizarIconeTema(tema){
-    // O icone mostrado representa a acao do clique (para onde ele vai mudar)
-    btnTema.textContent = tema === "escuro" ? "☀️" : "🌙";
-    btnTema.title = tema === "escuro" ? "Mudar para o tema claro" : "Mudar para o tema escuro";
-  }
-
-  function aplicarTema(tema){
-    document.documentElement.setAttribute("data-tema", tema);
-    atualizarIconeTema(tema);
-  }
-
-  // O <head> ja aplicou um tema inicial (para nao piscar); aqui so sincronizamos o icone
-  var temaAtual = document.documentElement.getAttribute("data-tema") || "claro";
-  atualizarIconeTema(temaAtual);
-
-  btnTema.addEventListener("click", function(){
-    temaAtual = temaAtual === "escuro" ? "claro" : "escuro";
-    try{ localStorage.setItem(CHAVE_TEMA, temaAtual); } catch(e){}
-    aplicarTema(temaAtual);
-  });
-
-  // Se a pessoa nunca escolheu manualmente, acompanha o tema do sistema operacional
-  if(window.matchMedia){
-    window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", function(evento){
-      var escolhaManual = null;
-      try{ escolhaManual = localStorage.getItem(CHAVE_TEMA); } catch(e){}
-      if(escolhaManual !== "claro" && escolhaManual !== "escuro"){
-        temaAtual = evento.matches ? "escuro" : "claro";
-        aplicarTema(temaAtual);
-      }
-    });
+    document.getElementById("rodapeNota").textContent = "Dados salvos localmente neste navegador.";
+    mostrarAviso("Armazenamento local ativo. Configure as chaves do Supabase no código para nuvem.", "info");
   }
 
   var hoje = new Date();
   var estado = {
-    mes: hoje.getMonth(),
-    ano: hoje.getFullYear(),
-    tipoAtivo: "unica",
-    contas: [],
-    editandoId: null,
-    termoBusca: "",
-    buscaGlobal: false
+    mes: hoje.getMonth(), ano: hoje.getFullYear(),
+    tipoAtivo: "unica", contas: [], editandoId: null,
+    termoBusca: "", buscaGlobal: false
   };
 
-  function normalizarTexto(texto){
-    return (texto || "")
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .toLowerCase()
-      .trim();
-  }
+  var estadoExclusao = { conta: null };
 
-  // ---- Camada de dados: usa Supabase se configurado, senao localStorage ----
-
-  function carregarContasLocal(){
-    try{
-      var salvo = localStorage.getItem(CHAVE_ARMAZENAMENTO);
-      return salvo ? JSON.parse(salvo) : [];
-    } catch(e){
-      return [];
-    }
-  }
-
-  function salvarContasLocal(){
-    localStorage.setItem(CHAVE_ARMAZENAMENTO, JSON.stringify(estado.contas));
-  }
-
+  // ---- Mapeadores Supabase <-> Local ----
   function linhaBdParaLocal(r){
-    return {
-      id: r.id,
-      descricao: r.descricao,
-      valor: Number(r.valor),
-      dia: r.dia,
-      mes: r.mes,
-      ano: r.ano,
-      status: r.status,
-      grupo: r.grupo,
-      parcelaInfo: r.parcela_info
-    };
+    return { id: r.id, descricao: r.descricao, valor: Number(r.valor), dia: r.dia, mes: r.mes, ano: r.ano, status: r.status, grupo: r.grupo, parcelaInfo: r.parcela_info };
   }
-
   function linhaLocalParaBd(c){
-    return {
-      descricao: c.descricao,
-      valor: c.valor,
-      dia: c.dia,
-      mes: c.mes,
-      ano: c.ano,
-      status: c.status,
-      grupo: c.grupo,
-      parcela_info: c.parcelaInfo
-    };
+    return { descricao: c.descricao, valor: c.valor, dia: c.dia, mes: c.mes, ano: c.ano, status: c.status, grupo: c.grupo, parcela_info: c.parcelaInfo };
   }
 
-  // Busca todas as contas (do Supabase ou do localStorage)
   async function buscarTodasContas(){
     if(supabaseConfigurado && supabaseClient){
       var resp = await supabaseClient.from("contas").select("*");
-      if(resp.error){
-        mostrarAviso("Nao foi possivel carregar os dados do Supabase. Verifique a URL/chave e a tabela 'contas'. Detalhe: " + resp.error.message, "erro");
-        return [];
-      }
-      esconderAviso();
-      return resp.data.map(linhaBdParaLocal);
+      if(resp.error){ mostrarAviso("Erro Supabase: " + resp.error.message, "erro"); return []; }
+      esconderAviso(); return resp.data.map(linhaBdParaLocal);
     }
-    return carregarContasLocal();
+    try { return JSON.parse(localStorage.getItem(CHAVE_ARMAZENAMENTO)) || []; } catch(e) { return []; }
   }
 
-  // Insere uma ou mais contas novas. Retorna as contas ja com id definido.
   async function inserirContas(novasContas){
     if(supabaseConfigurado && supabaseClient){
-      var linhas = novasContas.map(linhaLocalParaBd);
-      var resp = await supabaseClient.from("contas").insert(linhas).select();
-      if(resp.error){
-        mostrarAviso("Nao foi possivel salvar no Supabase. Detalhe: " + resp.error.message, "erro");
-        return null;
-      }
+      var resp = await supabaseClient.from("contas").insert(novasContas.map(linhaLocalParaBd)).select();
+      if(resp.error){ mostrarAviso("Erro ao salvar: " + resp.error.message, "erro"); return null; }
       return resp.data.map(linhaBdParaLocal);
     }
-    novasContas.forEach(function(c){ c.id = gerarId(); });
-    estado.contas = estado.contas.concat(novasContas);
-    salvarContasLocal();
+    novasContas.forEach(function(c){ c.id = "c" + Date.now() + Math.floor(Math.random()*10000); });
+    estado.contas = estado.contas.concat(novasContas); localStorage.setItem(CHAVE_ARMAZENAMENTO, JSON.stringify(estado.contas));
     return novasContas;
   }
 
-  // Atualiza campos de uma conta (status, descricao, valor, dia)
   async function atualizarContaBd(id, campos){
     if(supabaseConfigurado && supabaseClient){
       var camposBd = {};
@@ -1313,644 +671,215 @@
       if("dia" in campos) camposBd.dia = campos.dia;
       if("status" in campos) camposBd.status = campos.status;
       var resp = await supabaseClient.from("contas").update(camposBd).eq("id", id);
-      if(resp.error){
-        mostrarAviso("Nao foi possivel atualizar no Supabase. Detalhe: " + resp.error.message, "erro");
-        return false;
-      }
-      return true;
+      return !resp.error;
     }
-    salvarContasLocal();
-    return true;
+    localStorage.setItem(CHAVE_ARMAZENAMENTO, JSON.stringify(estado.contas)); return true;
   }
 
-  // Exclui uma conta
   async function excluirContaBd(id){
     if(supabaseConfigurado && supabaseClient){
       var resp = await supabaseClient.from("contas").delete().eq("id", id);
-      if(resp.error){
-        mostrarAviso("Nao foi possivel excluir no Supabase. Detalhe: " + resp.error.message, "erro");
-        return false;
-      }
-      return true;
+      return !resp.error;
     }
-    salvarContasLocal();
-    return true;
+    localStorage.setItem(CHAVE_ARMAZENAMENTO, JSON.stringify(estado.contas)); return true;
   }
 
-  // Exclui todas as parcelas de um mesmo parcelamento (pagas e pendentes, em todos os meses)
   async function excluirGrupoBd(grupoId){
     if(supabaseConfigurado && supabaseClient){
       var resp = await supabaseClient.from("contas").delete().eq("grupo", grupoId);
-      if(resp.error){
-        mostrarAviso("Nao foi possivel excluir o parcelamento no Supabase. Detalhe: " + resp.error.message, "erro");
-        return false;
-      }
-      return true;
+      return !resp.error;
     }
-    salvarContasLocal();
-    return true;
+    localStorage.setItem(CHAVE_ARMAZENAMENTO, JSON.stringify(estado.contas)); return true;
   }
 
   function formatarMoeda(valor){
     return "R$ " + Number(valor || 0).toLocaleString("pt-BR", {minimumFractionDigits:2, maximumFractionDigits:2});
   }
 
-  function gerarId(){
-    return "c" + Date.now() + Math.floor(Math.random()*10000);
-  }
-
-  function escaparHtml(texto){
-    var div = document.createElement("div");
-    div.textContent = texto;
-    return div.innerHTML;
-  }
-
-  // --- preencher selects de mes/ano iniciais do formulario ---
   function preencherSelectsFormulario(){
-    var selMes = document.getElementById("mesInicial");
-    var selAno = document.getElementById("anoInicial");
-    selMes.innerHTML = "";
-    NOMES_MES.forEach(function(nome, indice){
-      var op = document.createElement("option");
-      op.value = indice;
-      op.textContent = nome;
-      selMes.appendChild(op);
-    });
+    var selMes = document.getElementById("mesInicial"), selAno = document.getElementById("anoInicial");
+    selMes.innerHTML = ""; selAno.innerHTML = "";
+    NOMES_MES.forEach(function(n, i){ var o = document.createElement("option"); o.value = i; o.textContent = n; selMes.appendChild(o); });
     selMes.value = estado.mes;
-
-    selAno.innerHTML = "";
-    var anoBase = hoje.getFullYear();
-    for(var a = anoBase - 2; a <= anoBase + 5; a++){
-      var op2 = document.createElement("option");
-      op2.value = a;
-      op2.textContent = a;
-      selAno.appendChild(op2);
+    for(var a = hoje.getFullYear() - 2; a <= hoje.getFullYear() + 5; a++){
+      var o2 = document.createElement("option"); o2.value = a; o2.textContent = a; selAno.appendChild(o2);
     }
     selAno.value = estado.ano;
   }
 
   function atualizarTituloMes(){
     document.getElementById("tituloMes").textContent = NOMES_MES[estado.mes] + " de " + estado.ano;
-    document.getElementById("tituloLista").textContent = "Contas de " + NOMES_MES[estado.mes];
-    document.getElementById("rotuloRelatorioMes").textContent = "Relatorio de " + NOMES_MES[estado.mes] + " de " + estado.ano;
   }
 
   function mudarMes(delta){
     estado.mes += delta;
-    if(estado.mes > 11){ estado.mes = 0; estado.ano++; }
-    if(estado.mes < 0){ estado.mes = 11; estado.ano--; }
-    atualizarTituloMes();
-    renderizarLista();
+    if(estado.mes > 11){ estado.mes = 0; estado.ano++; } else if(estado.mes < 0){ estado.mes = 11; estado.ano--; }
+    atualizarTituloMes(); renderizarLista();
   }
 
   document.getElementById("btnMesAnterior").addEventListener("click", function(){ mudarMes(-1); });
   document.getElementById("btnProximoMes").addEventListener("click", function(){ mudarMes(1); });
   document.getElementById("btnHoje").addEventListener("click", function(){
-    estado.mes = hoje.getMonth();
-    estado.ano = hoje.getFullYear();
-    atualizarTituloMes();
-    renderizarLista();
+    estado.mes = hoje.getMonth(); estado.ano = hoje.getFullYear(); atualizarTituloMes(); renderizarLista();
   });
 
-  // --- Modal adicionar ---
+  // --- Modais Controles ---
   var fundoAdicionar = document.getElementById("fundoModalAdicionar");
-  document.getElementById("btnAbrirAdicionar").addEventListener("click", function(){
-    preencherSelectsFormulario();
-    fundoAdicionar.classList.add("aberto");
-  });
-  document.getElementById("btnFecharAdicionar").addEventListener("click", function(){
-    fundoAdicionar.classList.remove("aberto");
-  });
-  fundoAdicionar.addEventListener("click", function(evento){
-    if(evento.target === fundoAdicionar) fundoAdicionar.classList.remove("aberto");
-  });
-
-  // --- selecao do tipo de conta ---
-  var descricoesTipo = {
-    unica: "Uma conta que acontece uma unica vez, em um mes especifico.",
-    parcelada: "Uma compra parcelada: voce informa o valor TOTAL e o numero de parcelas, e o sistema divide o valor automaticamente pelos meses seguintes.",
-    fixa: "Uma despesa que se repete com o MESMO valor por varios meses seguidos (ex: mensalidade de R$100 por 10 meses)."
-  };
+  document.getElementById("btnAbrirAdicionar").addEventListener("click", function(){ preencherSelectsFormulario(); fundoAdicionar.classList.add("aberto"); });
+  document.getElementById("btnFecharAdicionar").addEventListener("click", function(){ fundoAdicionar.classList.remove("aberto"); });
 
   var botoesTipo = document.querySelectorAll(".tipo-btn");
-  botoesTipo.forEach(function(botao){
-    botao.addEventListener("click", function(){
-      botoesTipo.forEach(function(b){ b.classList.remove("ativo"); });
-      botao.classList.add("ativo");
-      estado.tipoAtivo = botao.getAttribute("data-tipo");
-      document.getElementById("tipoDescricao").textContent = descricoesTipo[estado.tipoAtivo];
-
-      var campoParcelas = document.getElementById("campoParcelas");
-      var rotuloValor = document.getElementById("rotuloValor");
-      var rotuloParcelas = document.getElementById("rotuloParcelas");
-      var ajudaParcelas = document.getElementById("ajudaParcelas");
-
-      if(estado.tipoAtivo === "unica"){
-        campoParcelas.style.display = "none";
-        rotuloValor.textContent = "Valor (R$)";
-      } else if(estado.tipoAtivo === "parcelada"){
-        campoParcelas.style.display = "block";
-        rotuloValor.textContent = "Valor TOTAL da compra (R$)";
-        rotuloParcelas.textContent = "Em quantas vezes";
-        ajudaParcelas.textContent = "O valor total sera dividido igualmente entre as parcelas, uma por mes.";
-      } else if(estado.tipoAtivo === "fixa"){
-        campoParcelas.style.display = "block";
-        rotuloValor.textContent = "Valor de cada mes (R$)";
-        rotuloParcelas.textContent = "Por quantos meses";
-        ajudaParcelas.textContent = "O mesmo valor sera lancado em cada um desses meses, comecando pelo mes inicial.";
-      }
+  botoesTipo.forEach(function(b){
+    b.addEventListener("click", function(){
+      botoesTipo.forEach(function(btn){ btn.classList.remove("ativo"); }); b.classList.add("ativo");
+      estado.tipoAtivo = b.getAttribute("data-tipo");
+      document.getElementById("campoParcelas").style.display = estado.tipoAtivo === "unica" ? "none" : "block";
     });
   });
 
-  // --- envio do formulario ---
-  document.getElementById("formConta").addEventListener("submit", async function(evento){
-    evento.preventDefault();
-
-    var descricao = document.getElementById("descricao").value.trim();
-    var valor = parseFloat(document.getElementById("valor").value);
+  document.getElementById("formConta").addEventListener("submit", async function(e){
+    e.preventDefault();
+    var desc = document.getElementById("descricao").value.trim();
+    var val = parseFloat(document.getElementById("valor").value);
     var dia = document.getElementById("diaVencimento").value ? parseInt(document.getElementById("diaVencimento").value, 10) : null;
-    var mesInicial = parseInt(document.getElementById("mesInicial").value, 10);
-    var anoInicial = parseInt(document.getElementById("anoInicial").value, 10);
+    var mInit = parseInt(document.getElementById("mesInicial").value, 10);
+    var aInit = parseInt(document.getElementById("anoInicial").value, 10);
 
-    if(!descricao || isNaN(valor) || valor <= 0){
-      alert("Preencha a descricao e um valor valido antes de adicionar.");
-      return;
-    }
+    var btn = document.getElementById("btnSalvarNovaConta");
+    btn.disabled = true; btn.textContent = "Salvando...";
 
-    var botaoSalvar = evento.target.querySelector("button[type=submit]");
-    var textoOriginalBotao = botaoSalvar.textContent;
-    botaoSalvar.disabled = true;
-    botaoSalvar.textContent = "Salvando...";
-
-    var novasContas = [];
-
+    var novas = [];
     if(estado.tipoAtivo === "unica"){
-      novasContas.push({
-        descricao: descricao,
-        valor: valor,
-        dia: dia,
-        mes: mesInicial,
-        ano: anoInicial,
-        status: "pendente",
-        grupo: null,
-        parcelaInfo: null
-      });
+      novas.push({ descricao: desc, valor: val, dia: dia, mes: mInit, ano: aInit, status: "pendente", grupo: null, parcelaInfo: null });
     } else {
-      var numParcelas = parseInt(document.getElementById("numParcelas").value, 10);
-      if(!numParcelas || numParcelas < 2){
-        alert("Informe um numero de parcelas/meses valido (2 ou mais).");
-        botaoSalvar.disabled = false;
-        botaoSalvar.textContent = textoOriginalBotao;
-        return;
-      }
-      var idGrupo = gerarId();
-      var valorParcela = estado.tipoAtivo === "parcelada" ? (valor / numParcelas) : valor;
-
-      for(var i = 0; i < numParcelas; i++){
-        var mesCalc = mesInicial + i;
-        var anoCalc = anoInicial + Math.floor(mesCalc / 12);
-        mesCalc = mesCalc % 12;
-
-        novasContas.push({
-          descricao: descricao,
-          valor: valorParcela,
-          dia: dia,
-          mes: mesCalc,
-          ano: anoCalc,
-          status: "pendente",
-          grupo: idGrupo,
-          parcelaInfo: (i+1) + "/" + numParcelas
-        });
+      var parcelas = parseInt(document.getElementById("numParcelas").value, 10) || 2;
+      var idG = "g" + Date.now();
+      var valP = estado.tipoAtivo === "parcelada" ? (val / parcelas) : val;
+      for(var i=0; i<parcelas; i++){
+        var mCalc = (mInit + i) % 12; var aCalc = aInit + Math.floor((mInit + i) / 12);
+        novas.push({ descricao: desc, valor: valP, dia: dia, mes: mCalc, ano: aCalc, status: "pendente", grupo: idG, parcelaInfo: (i+1)+"/"+parcelas });
       }
     }
 
-    var resultado = await inserirContas(novasContas);
-
-    botaoSalvar.disabled = false;
-    botaoSalvar.textContent = textoOriginalBotao;
-
-    if(resultado === null){
-      return; // erro ja avisado pela camada de dados
+    var res = await inserirContas(novas);
+    btn.disabled = false; btn.textContent = "Adicionar conta";
+    if(res) {
+      if(supabaseConfigurado) estado.contas = estado.contas.concat(res);
+      document.getElementById("formConta").reset(); fundoAdicionar.classList.remove("aberto"); renderizarLista();
     }
-
-    if(supabaseConfigurado){
-      estado.contas = estado.contas.concat(resultado);
-    }
-
-    document.getElementById("formConta").reset();
-    preencherSelectsFormulario();
-    renderizarLista();
-    fundoAdicionar.classList.remove("aberto");
   });
 
-  // --- renderizar lista do mes atual (ou resultado da busca) ---
   function renderizarLista(){
-    var container = document.getElementById("listaContas");
-    container.innerHTML = "";
+    var container = document.getElementById("listaContas"); container.innerHTML = "";
+    var contasMes = estado.contas.filter(function(c){ return c.mes === estado.mes && c.ano === estado.ano; });
 
-    // Contas do mes/ano em exibicao (usadas sempre para os cartoes de resumo)
-    var contasDoMes = estado.contas.filter(function(c){
-      return c.mes === estado.mes && c.ano === estado.ano;
-    });
+    var totalP = 0, totalPago = 0;
+    contasMes.forEach(function(c){ totalP += c.valor; if(c.status === "pago") totalPago += c.valor; });
 
-    var totalPrevisto = 0, totalPago = 0, totalPendente = 0;
-    contasDoMes.forEach(function(c){
-      totalPrevisto += c.valor;
-      if(c.status === "pago") totalPago += c.valor; else totalPendente += c.valor;
-    });
-
-    document.getElementById("totalPrevisto").textContent = formatarMoeda(totalPrevisto);
+    document.getElementById("totalPrevisto").textContent = formatarMoeda(totalP);
     document.getElementById("totalPago").textContent = formatarMoeda(totalPago);
-    document.getElementById("totalPendente").textContent = formatarMoeda(totalPendente);
+    document.getElementById("totalPagoCard").textContent = formatarMoeda(totalPago);
+    document.getElementById("totalPendente").textContent = formatarMoeda(totalP - totalPago);
+    document.getElementById("barraPreenchida").style.width = (totalP > 0 ? (totalPago / totalP) * 100 : 0) + "%";
 
-    var percentual = totalPrevisto > 0 ? Math.round((totalPago / totalPrevisto) * 100) : 0;
-    document.getElementById("barraPreenchida").style.width = percentual + "%";
-    document.getElementById("progressoPercentual").textContent = percentual + "%";
-
-    // Mostra ou esconde os cartoes de resumo dependendo do modo de busca
-    var mostrarResumo = !estado.buscaGlobal;
-    document.querySelector(".resumo").style.display = mostrarResumo ? "grid" : "none";
-    document.querySelector(".progresso-wrap").style.display = mostrarResumo ? "block" : "none";
-    document.getElementById("avisoBuscaGlobal").style.display = estado.buscaGlobal ? "block" : "none";
-
-    // Define a lista base: so o mes atual, ou todas as contas (busca global)
-    var listaBase = estado.buscaGlobal ? estado.contas.slice() : contasDoMes.slice();
-
-    // Aplica o filtro de texto da busca, se houver
-    var termo = normalizarTexto(estado.termoBusca);
-    var listaFiltrada = termo
-      ? listaBase.filter(function(c){ return normalizarTexto(c.descricao).indexOf(termo) !== -1; })
-      : listaBase;
-
-    listaFiltrada.sort(function(a, b){
-      if(estado.buscaGlobal){
-        if(a.ano !== b.ano) return a.ano - b.ano;
-        if(a.mes !== b.mes) return a.mes - b.mes;
-      }
-      var diaA = a.dia || 99;
-      var diaB = b.dia || 99;
-      if(diaA !== diaB) return diaA - diaB;
-      return a.descricao.localeCompare(b.descricao);
-    });
-
-    // Titulo da secao
-    var tituloLista = document.getElementById("tituloLista");
-    if(estado.buscaGlobal){
-      tituloLista.textContent = termo
-        ? listaFiltrada.length + " resultado(s) para \"" + estado.termoBusca + "\""
-        : "Todas as contas cadastradas";
-    } else {
-      tituloLista.textContent = "Contas de " + NOMES_MES[estado.mes] +
-        (termo ? " · " + listaFiltrada.length + " resultado(s) para \"" + estado.termoBusca + "\"" : "");
+    var filtradas = estado.buscaGlobal ? estado.contas : contasMes;
+    if(estado.termoBusca) {
+      filtradas = filtradas.filter(function(c){ return c.descricao.toLowerCase().includes(estado.termoBusca.toLowerCase()); });
     }
 
-    if(listaFiltrada.length === 0){
-      if(termo){
-        container.innerHTML = '<div class="vazio">Nenhuma conta encontrada para "' + escaparHtml(estado.termoBusca) + '".</div>';
-      } else {
-        container.innerHTML = '<div class="vazio">Nenhuma conta cadastrada para este mes ainda.<br>Use o botao "+ Adicionar conta" acima para adicionar a primeira.</div>';
-      }
-      return;
-    }
+    if(filtradas.length === 0){ container.innerHTML = '<div class="vazio">Nenhuma transação encontrada.</div>'; return; }
 
-    listaFiltrada.forEach(function(c){
-      var item = document.createElement("div");
-      item.className = "conta-item " + c.status;
+    filtradas.forEach(function(c){
+      var item = document.createElement("div"); item.className = "conta-item";
+      var sub = (c.dia ? "Dia " + c.dia : "Sem vencimento") + (c.parcelaInfo ? " • Parcela " + c.parcelaInfo : "");
+      if(estado.buscaGlobal) sub = NOMES_MES[c.mes] + "/" + c.ano + " • " + sub;
 
-      var subtexto = "";
-      if(estado.buscaGlobal) subtexto += NOMES_MES[c.mes] + "/" + c.ano;
-      if(c.dia) subtexto += (subtexto ? " · " : "") + "Vencimento: dia " + c.dia;
-      if(c.parcelaInfo) subtexto += (subtexto ? " · " : "") + "Parcela " + c.parcelaInfo;
-
-      item.innerHTML =
-        '<div class="conta-info">' +
-          '<div class="conta-desc">' + escaparHtml(c.descricao) + '</div>' +
-          (subtexto ? '<div class="conta-sub">' + subtexto + '</div>' : '') +
-        '</div>' +
-        '<div class="conta-valor">' + formatarMoeda(c.valor) + '</div>' +
-        '<div class="conta-acoes">' +
-          '<button class="btn-status ' + c.status + '" data-id="' + c.id + '" data-acao="status">' +
-            (c.status === "pago" ? "Pago ✓" : "Pendente") +
-          '</button>' +
-          '<button class="btn-icone" data-id="' + c.id + '" data-acao="editar" title="Editar">&#9998;</button>' +
-          '<button class="btn-icone excluir" data-id="' + c.id + '" data-acao="excluir" title="Excluir">&#10005;</button>' +
-        '</div>';
-
+      item.innerHTML = `
+        <div class="conta-info">
+          <div class="conta-desc">${c.descricao}</div>
+          <div class="conta-sub">${sub}</div>
+        </div>
+        <div style="display:flex; align-items:center;">
+          <div class="conta-valor-wrapper">
+            <div class="conta-valor" style="${c.status === 'pago' ? 'text-decoration:line-through; opacity:0.5;' : ''}">${formatarMoeda(c.valor)}</div>
+          </div>
+          <div class="conta-acoes">
+            <button class="btn-status ${c.status}" data-id="${c.id}" data-acao="status">${c.status === 'pago' ? 'Pago ✓' : 'Pendente'}</button>
+            <button class="btn-icone" data-id="${c.id}" data-acao="editar">✏️</button>
+            <button class="btn-icone" data-id="${c.id}" data-acao="excluir">✕</button>
+          </div>
+        </div>`;
       container.appendChild(item);
     });
   }
 
-  // --- busca ---
-  var campoBusca = document.getElementById("campoBusca");
-  var btnLimparBusca = document.getElementById("btnLimparBusca");
-  var btnBuscarTodosMeses = document.getElementById("btnBuscarTodosMeses");
-
-  campoBusca.addEventListener("input", function(){
-    estado.termoBusca = campoBusca.value;
-    btnLimparBusca.style.display = estado.termoBusca ? "block" : "none";
-    renderizarLista();
-  });
-
-  btnLimparBusca.addEventListener("click", function(){
-    campoBusca.value = "";
-    estado.termoBusca = "";
-    btnLimparBusca.style.display = "none";
-    renderizarLista();
-    campoBusca.focus();
-  });
-
-  btnBuscarTodosMeses.addEventListener("click", function(){
-    estado.buscaGlobal = !estado.buscaGlobal;
-    btnBuscarTodosMeses.classList.toggle("ativo", estado.buscaGlobal);
-    renderizarLista();
-  });
-
-  document.getElementById("listaContas").addEventListener("click", async function(evento){
-    var alvo = evento.target;
-    if(alvo.tagName !== "BUTTON") return;
-    var id = alvo.getAttribute("data-id");
-    var acao = alvo.getAttribute("data-acao");
-    var conta = estado.contas.find(function(c){ return c.id === id; });
-    if(!conta) return;
+  // --- Ações na Lista (Status / Editar / Excluir) ---
+  document.getElementById("listaContas").addEventListener("click", async function(e){
+    var id = e.target.getAttribute("data-id"); var acao = e.target.getAttribute("data-acao");
+    if(!id) return;
+    var conta = estado.contas.find(function(c){ return c.id == id; });
 
     if(acao === "status"){
-      var statusAnterior = conta.status;
-      var novoStatus = conta.status === "pago" ? "pendente" : "pago";
-      conta.status = novoStatus;
-      renderizarLista();
-      var ok = await atualizarContaBd(id, {status: novoStatus});
-      if(!ok){
-        conta.status = statusAnterior;
-        renderizarLista();
-      }
-    } else if(acao === "excluir"){
-      abrirModalExcluir(conta);
+      conta.status = conta.status === "pago" ? "pendente" : "pago"; renderizarLista();
+      await atualizarContaBd(id, { status: conta.status });
     } else if(acao === "editar"){
-      abrirEdicao(conta);
+      estado.editandoId = id;
+      document.getElementById("editDescricao").value = conta.descricao;
+      document.getElementById("editValor").value = conta.valor;
+      document.getElementById("editDia").value = conta.dia || "";
+      document.getElementById("fundoModal").classList.add("aberto");
+    } else if(acao === "excluir"){
+      estadoExclusao.conta = conta;
+      document.getElementById("excluirDescricao").textContent = conta.descricao;
+      document.getElementById("excluirValor").textContent = formatarMoeda(conta.valor);
+      document.getElementById("excluirAvisoGrupo").style.display = conta.grupo ? "block" : "none";
+      document.getElementById("fundoModalExcluir").classList.add("aberto");
     }
   });
 
-  // --- modal de edicao ---
-  function abrirEdicao(conta){
-    estado.editandoId = conta.id;
-    document.getElementById("editDescricao").value = conta.descricao;
-    document.getElementById("editValor").value = conta.valor;
-    document.getElementById("editDia").value = conta.dia || "";
-    document.getElementById("fundoModal").classList.add("aberto");
-  }
-
-  document.getElementById("btnCancelarEdicao").addEventListener("click", function(){
-    document.getElementById("fundoModal").classList.remove("aberto");
-    estado.editandoId = null;
-  });
-
-  document.getElementById("btnFecharEdicao").addEventListener("click", function(){
-    document.getElementById("fundoModal").classList.remove("aberto");
-    estado.editandoId = null;
-  });
-
-  document.getElementById("fundoModal").addEventListener("click", function(evento){
-    if(evento.target === document.getElementById("fundoModal")){
-      document.getElementById("fundoModal").classList.remove("aberto");
-      estado.editandoId = null;
-    }
-  });
-
+  // Salvar Edição
   document.getElementById("btnSalvarEdicao").addEventListener("click", async function(){
-    var conta = estado.contas.find(function(c){ return c.id === estado.editandoId; });
-    if(!conta) return;
-
-    var novaDescricao = document.getElementById("editDescricao").value.trim();
-    var novoValor = parseFloat(document.getElementById("editValor").value);
-    var novoDia = document.getElementById("editDia").value ? parseInt(document.getElementById("editDia").value, 10) : null;
-
-    if(!novaDescricao || isNaN(novoValor) || novoValor <= 0){
-      alert("Preencha a descricao e um valor valido.");
-      return;
-    }
-
-    var botao = document.getElementById("btnSalvarEdicao");
-    botao.disabled = true;
-    botao.textContent = "Salvando...";
-
-    var ok = await atualizarContaBd(conta.id, {
-      descricao: novaDescricao,
-      valor: novoValor,
-      dia: novoDia
-    });
-
-    botao.disabled = false;
-    botao.textContent = "Salvar";
-
-    if(!ok) return;
-
-    conta.descricao = novaDescricao;
-    conta.valor = novoValor;
-    conta.dia = novoDia;
-
-    document.getElementById("fundoModal").classList.remove("aberto");
-    estado.editandoId = null;
-    renderizarLista();
+    var conta = estado.contas.find(function(c){ return c.id == estado.editandoId; });
+    conta.descricao = document.getElementById("editDescricao").value.trim();
+    conta.valor = parseFloat(document.getElementById("editValor").value);
+    conta.dia = document.getElementById("editDia").value ? parseInt(document.getElementById("editDia").value, 10) : null;
+    
+    document.getElementById("fundoModal").classList.remove("aberto"); renderizarLista();
+    await atualizarContaBd(conta.id, { descricao: conta.descricao, valor: conta.valor, dia: conta.dia });
   });
 
-  // --- Modal de confirmar exclusao ---
-  var fundoExcluir = document.getElementById("fundoModalExcluir");
-  var estadoExclusao = { conta: null };
-
-  function abrirModalExcluir(conta){
-    estadoExclusao.conta = conta;
-
-    document.getElementById("excluirDescricao").textContent = conta.descricao;
-    document.getElementById("excluirValor").textContent = formatarMoeda(conta.valor);
-
-    var detalhes = NOMES_MES[conta.mes] + " de " + conta.ano;
-    if(conta.dia) detalhes += " · Vencimento dia " + conta.dia;
-    if(conta.parcelaInfo) detalhes += " · Parcela " + conta.parcelaInfo;
-    document.getElementById("excluirDetalhes").textContent = detalhes;
-
-    var avisoGrupo = document.getElementById("excluirAvisoGrupo");
-    var botaoConfirmar = document.getElementById("btnConfirmarExcluir");
-    var textoPrincipal = document.getElementById("excluirTextoPrincipal");
-
-    if(conta.grupo){
-      var totalParcelas = estado.contas.filter(function(c){ return c.grupo === conta.grupo; }).length;
-      avisoGrupo.style.display = "block";
-      textoPrincipal.textContent = "Esta conta esta dividida em " + totalParcelas + " parcela(s).";
-      botaoConfirmar.textContent = "Excluir todas as parcelas";
-    } else {
-      avisoGrupo.style.display = "none";
-      textoPrincipal.textContent = "Tem certeza que deseja excluir esta conta? Essa acao nao pode ser desfeita.";
-      botaoConfirmar.textContent = "Excluir";
-    }
-
-    fundoExcluir.classList.add("aberto");
-  }
-
-  function fecharModalExcluir(){
-    fundoExcluir.classList.remove("aberto");
-    estadoExclusao.conta = null;
-  }
-
-  document.getElementById("btnCancelarExcluir").addEventListener("click", fecharModalExcluir);
-  document.getElementById("btnFecharExcluir").addEventListener("click", fecharModalExcluir);
-  fundoExcluir.addEventListener("click", function(evento){
-    if(evento.target === fundoExcluir) fecharModalExcluir();
-  });
-
+  // Confirmar Exclusão
   document.getElementById("btnConfirmarExcluir").addEventListener("click", async function(){
     var conta = estadoExclusao.conta;
-    if(!conta) return;
-
-    var botao = document.getElementById("btnConfirmarExcluir");
-    var textoOriginal = botao.textContent;
-    botao.disabled = true;
-    botao.textContent = "Excluindo...";
-
-    var sucesso;
-    if(conta.grupo){
-      sucesso = await excluirGrupoBd(conta.grupo);
-      if(sucesso){
-        estado.contas = estado.contas.filter(function(c){ return c.grupo !== conta.grupo; });
-      }
+    if(conta.grupo) {
+      await excluirGrupoBd(conta.grupo); estado.contas = estado.contas.filter(function(c){ return c.grupo !== conta.grupo; });
     } else {
-      sucesso = await excluirContaBd(conta.id);
-      if(sucesso){
-        estado.contas = estado.contas.filter(function(c){ return c.id !== conta.id; });
-      }
+      await excluirContaBd(conta.id); estado.contas = estado.contas.filter(function(c){ return c.id !== conta.id; });
     }
-
-    botao.disabled = false;
-    botao.textContent = textoOriginal;
-
-    if(!sucesso) return;
-
-    fecharModalExcluir();
-    renderizarLista();
+    document.getElementById("fundoModalExcluir").classList.remove("aberto"); renderizarLista();
   });
 
-  // --- Modal de relatorio / geracao de PDF via impressao ---
-  var fundoRelatorio = document.getElementById("fundoModalRelatorio");
-  document.getElementById("btnAbrirRelatorio").addEventListener("click", function(){
-    fundoRelatorio.classList.add("aberto");
-  });
-  document.getElementById("btnFecharRelatorio").addEventListener("click", function(){
-    fundoRelatorio.classList.remove("aberto");
-  });
-  fundoRelatorio.addEventListener("click", function(evento){
-    if(evento.target === fundoRelatorio) fundoRelatorio.classList.remove("aberto");
-  });
+  document.getElementById("btnCancelarExcluir").addEventListener("click", function(){ document.getElementById("fundoModalExcluir").classList.remove("aberto"); });
+  document.getElementById("btnFecharEdicao").addEventListener("click", function(){ document.getElementById("fundoModal").classList.remove("aberto"); });
+  document.getElementById("btnCancelarEdicao").addEventListener("click", function(){ document.getElementById("fundoModal").classList.remove("aberto"); });
 
-  function montarLinhasTabela(contas){
-    var html = "";
-    contas.forEach(function(c){
-      var venc = c.dia ? ("Dia " + c.dia) : "-";
-      var parcela = c.parcelaInfo ? c.parcelaInfo : "-";
-      var statusTexto = c.status === "pago" ? "✓ Pago" : "Pendente";
-      var statusClasse = c.status === "pago" ? "status-pago" : "status-pendente";
-      html += '<tr class="' + (c.status === "pago" ? "rel-pago" : "rel-pendente") + '">' +
-        '<td>' + escaparHtml(c.descricao) + '</td>' +
-        '<td>' + venc + '</td>' +
-        '<td>' + parcela + '</td>' +
-        '<td>' + formatarMoeda(c.valor) + '</td>' +
-        '<td class="' + statusClasse + '">' + statusTexto + '</td>' +
-        '</tr>';
-    });
-    return html;
-  }
-
-  function montarResumoHtml(contas){
-    var totalPrevisto = 0, totalPago = 0, totalPendente = 0;
-    contas.forEach(function(c){
-      totalPrevisto += c.valor;
-      if(c.status === "pago") totalPago += c.valor; else totalPendente += c.valor;
-    });
-    return '<div class="rel-resumo">' +
-      '<div><div class="rot">Previsto</div><div class="val">' + formatarMoeda(totalPrevisto) + '</div></div>' +
-      '<div><div class="rot">Pago</div><div class="val">' + formatarMoeda(totalPago) + '</div></div>' +
-      '<div><div class="rot">Pendente</div><div class="val">' + formatarMoeda(totalPendente) + '</div></div>' +
-      '</div>';
-  }
-
-  function gerarPdf(){
-    window.focus();
-    setTimeout(function(){ window.print(); }, 100);
-  }
-
-  document.getElementById("btnRelatorioMes").addEventListener("click", function(){
-    var contasDoMes = estado.contas.filter(function(c){
-      return c.mes === estado.mes && c.ano === estado.ano;
-    }).sort(function(a,b){
-      var da = a.dia || 99, db = b.dia || 99;
-      return da - db;
-    });
-
-    var area = document.getElementById("areaImpressao");
-    area.innerHTML =
-      '<div class="rel-cabecalho">' +
-        '<h2>Relatorio de Gastos - ' + NOMES_MES[estado.mes] + ' de ' + estado.ano + '</h2>' +
-        '<p>Gerado em ' + new Date().toLocaleDateString("pt-BR") + '</p>' +
-      '</div>' +
-      montarResumoHtml(contasDoMes) +
-      (contasDoMes.length === 0
-        ? '<p>Nenhuma conta cadastrada neste mes.</p>'
-        : '<table class="rel-tabela"><thead><tr><th>Descricao</th><th>Vencimento</th><th>Parcela</th><th>Valor</th><th>Status</th></tr></thead><tbody>' +
-          montarLinhasTabela(contasDoMes) + '</tbody></table>') +
-      '<div class="rel-rodape">Relatorio gerado pelo sistema Meus Gastos em ' + new Date().toLocaleDateString("pt-BR") + '</div>';
-
-    fundoRelatorio.classList.remove("aberto");
-    gerarPdf();
+  // Busca e filtros
+  document.getElementById("campoBusca").addEventListener("input", function(e){ estado.termoBusca = e.target.value; renderizarLista(); });
+  document.getElementById("btnBuscarTodosMeses").addEventListener("click", function(){
+    estado.buscaGlobal = !estado.buscaGlobal; this.classList.toggle("ativo", estado.buscaGlobal);
+    document.getElementById("avisoBuscaGlobal").style.display = estado.buscaGlobal ? "block" : "none"; renderizarLista();
   });
 
-  document.getElementById("btnRelatorioAno").addEventListener("click", function(){
-    var contasDoAno = estado.contas.filter(function(c){ return c.ano === estado.ano; });
-
-    var area = document.getElementById("areaImpressao");
-    var html = '<div class="rel-cabecalho">' +
-        '<h2>Relatorio de Gastos - Ano de ' + estado.ano + '</h2>' +
-        '<p>Gerado em ' + new Date().toLocaleDateString("pt-BR") + '</p>' +
-      '</div>' +
-      montarResumoHtml(contasDoAno);
-
-    if(contasDoAno.length === 0){
-      html += '<p>Nenhuma conta cadastrada neste ano.</p>';
-    } else {
-      for(var m = 0; m < 12; m++){
-        var contasMes = contasDoAno.filter(function(c){ return c.mes === m; })
-          .sort(function(a,b){ var da=a.dia||99, db=b.dia||99; return da-db; });
-        if(contasMes.length === 0) continue;
-        html += '<div class="rel-mes-titulo">' + NOMES_MES[m] + '</div>';
-        html += '<table class="rel-tabela"><thead><tr><th>Descricao</th><th>Vencimento</th><th>Parcela</th><th>Valor</th><th>Status</th></tr></thead><tbody>' +
-          montarLinhasTabela(contasMes) + '</tbody></table>';
-      }
-    }
-    html += '<div class="rel-rodape">Relatorio gerado pelo sistema Meus Gastos em ' + new Date().toLocaleDateString("pt-BR") + '</div>';
-    area.innerHTML = html;
-
-    fundoRelatorio.classList.remove("aberto");
-    gerarPdf();
+  document.getElementById("btnTema").addEventListener("click", function(){
+    var t = document.documentElement.getAttribute("data-tema") === "escuro" ? "claro" : "escuro";
+    document.documentElement.setAttribute("data-tema", t); localStorage.setItem("controleGastos_tema", t);
   });
 
-  // fechar modais com a tecla ESC
-  document.addEventListener("keydown", function(evento){
-    if(evento.key === "Escape"){
-      fundoAdicionar.classList.remove("aberto");
-      fundoRelatorio.classList.remove("aberto");
-      document.getElementById("fundoModal").classList.remove("aberto");
-    }
-  });
-
-  // --- inicializacao ---
   async function iniciar(){
-    preencherSelectsFormulario();
-    atualizarTituloMes();
-    document.getElementById("listaContas").innerHTML =
-      '<div class="vazio">Carregando suas contas...</div>';
-    estado.contas = await buscarTodasContas();
-    renderizarLista();
+    estado.contas = await buscarTodasContas(); atualizarTituloMes(); renderizarLista();
   }
   iniciar();
 })();
 </script>
-
 </body>
 </html>
